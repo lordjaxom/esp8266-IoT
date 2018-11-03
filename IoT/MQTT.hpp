@@ -1,0 +1,40 @@
+#ifndef ESP8266_IOT_MQTT_HPP
+#define ESP8266_IOT_MQTT_HPP
+
+#include <stdint.h>
+#include <functional>
+#include <map>
+
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
+
+namespace iot {
+
+    class IoT;
+    class WiFi;
+
+    class MQTT
+    {
+    public:
+        static void publish( String topic, String payload );
+        static void subscribe( String topic, std::function< void( String message ) > handler );
+
+        explicit MQTT( IoT& iot, WiFi& wiFi, char const* ip, uint16_t port, char const* clientId ) noexcept;
+
+    private:
+        static MQTT* instance;
+
+        void loop();
+
+        IoT& iot_;
+        char const* ip_;
+        uint16_t port_;
+        char const* clientId_;
+        WiFiClient wiFiClient_;
+        PubSubClient pubSubClient_;
+        std::map< String, std::function< void( String message ) > > subscriptions_;
+    };
+
+} // namespace iot
+
+#endif // ESP8266_IOT_MQTT_HPP
