@@ -16,4 +16,10 @@ add_library(IoT STATIC
         String.hpp
         Event.hpp
         Device.cpp
-        Device.hpp)
+        Device.hpp
+        Input.cpp
+        Input.hpp
+        Pcf8574.cpp
+        Pcf8574.hpp
+        Wire.cpp
+        Wire.hpp)

@@ -12,6 +12,8 @@ namespace iot {
     public:
         WiFi( IoT& iot, char const* ssid, char const* password ) noexcept;
 
+        IoT& iot;
+
     private:
         void begin();
 

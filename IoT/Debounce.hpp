@@ -10,8 +10,7 @@ namespace iot {
     {
     public:
         explicit Debounce( std::function< T() > input )
-                : input_( std::move( input ))
-        {}
+                : input_( std::move( input )) {}
 
         T operator()()
         {
@@ -30,9 +29,9 @@ namespace iot {
     };
 
     template< typename Input >
-    Debounce< decltype( std::declval< Input >()() ) > debounce( Input&& input )
+    Debounce< decltype( std::declval< Input >()()) > debounce( Input&& input )
     {
-        return Debounce< decltype( std::declval< Input >()() ) >( std::forward< Input >( input ));
+        return Debounce< decltype( std::declval< Input >()()) >( std::forward< Input >( input ));
     }
 
 } // namespace iot

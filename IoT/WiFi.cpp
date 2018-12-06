@@ -5,7 +5,8 @@
 namespace iot {
 
     WiFi::WiFi( IoT& iot, char const* ssid, char const* password ) noexcept
-            : ssid_( ssid ),
+            : iot( iot ),
+              ssid_( ssid ),
               password_( password )
     {
         iot.beginEvent += [this] { this->begin(); };

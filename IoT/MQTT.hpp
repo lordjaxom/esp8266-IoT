@@ -11,6 +11,7 @@
 namespace iot {
 
     class IoT;
+
     class WiFi;
 
     class MQTT
@@ -19,14 +20,15 @@ namespace iot {
         static void publish( String topic, String payload );
         static void subscribe( String topic, std::function< void( String message ) > handler );
 
-        explicit MQTT( IoT& iot, WiFi& wiFi, char const* ip, uint16_t port, char const* clientId ) noexcept;
+        MQTT( WiFi& wiFi, char const* ip, uint16_t port, char const* clientId ) noexcept;
+
+        IoT& iot;
 
     private:
         static MQTT* instance;
 
         void loop();
 
-        IoT& iot_;
         char const* ip_;
         uint16_t port_;
         char const* clientId_;

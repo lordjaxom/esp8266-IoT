@@ -16,7 +16,7 @@ namespace iot {
             return;
         }
 
-        instance->iot_.enqueue( [topic = std::move( topic ), payload = std::move( payload )] {
+        instance->iot.enqueue( [topic = std::move( topic ), payload = std::move( payload )] {
             log( "publishing ", payload, " to ", topic );
             instance->pubSubClient_.publish( topic.c_str(), payload.c_str());
         } );
@@ -34,8 +34,8 @@ namespace iot {
         instance->subscriptions_.emplace( std::move( topic ), std::move( handler ));
     }
 
-    MQTT::MQTT( IoT& iot, WiFi& wiFi, char const* ip, uint16_t port, char const* clientId ) noexcept
-            : iot_( iot ),
+    MQTT::MQTT( WiFi& wiFi, char const* ip, uint16_t port, char const* clientId ) noexcept
+            : iot( wiFi.iot ),
               ip_( ip ),
               port_( port ),
               clientId_( clientId ),

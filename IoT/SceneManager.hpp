@@ -2,6 +2,7 @@
 #define ESP8266_IOT_SCENEMANAGER_HPP
 
 #include <map>
+#include <vector>
 
 #include "Event.hpp"
 
@@ -23,13 +24,23 @@ namespace iot {
     public:
         SceneManager( IoT& iot, char const* zone );
 
+        void addSceneEvent( Scene scene, std::function< void() > handler );
+
+        template< typename Device >
+        void addSceneDevice( Device& device, std::vector< Scene > const& onScenes, std::vector< Scene > const& offScenes )
+        {
+            for ( auto scene : onScenes ) {
+                sceneEvents_[scene] += [&device] { device.set( true ); };
+            }
+            for ( auto scene : offScenes ) {
+                sceneEvents_[scene] += [&device] { device.set( false ); };
+            }
+        }
+
         template< typename Device >
         void addSceneDevice( Device& device )
         {
-            sceneEvents_[Scene::SLEEP] += [&device] { device.set( false ); };
-            sceneEvents_[Scene::OFF] += [&device] { device.set( false ); };
-            sceneEvents_[Scene::SCENE1] += [&device] { device.set( true ); };
-            sceneEvents_[Scene::SCENE2] += [&device] { device.set( false ); };
+            addSceneDevice( device, { Scene::SCENE1 }, { Scene::SLEEP, Scene::OFF, Scene::SCENE2 } );
         }
 
         void sceneButtonClicked( unsigned clicked );
@@ -41,7 +52,8 @@ namespace iot {
         IoT& iot_;
         char const* zone_;
         Scene scene_ {};
-        std::map< Scene, Event < void() > > sceneEvents_;
+        std::map< Scene, Event < void() > >
+        sceneEvents_;
     };
 
 } // namespace iot

@@ -38,6 +38,11 @@ namespace iot {
         MQTT::subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { this->sceneCommand( message ); } );
     }
 
+    void SceneManager::addSceneEvent( Scene scene, std::function< void() > handler )
+    {
+        sceneEvents_[scene] += move( handler );
+    }
+
     void SceneManager::sceneButtonClicked( unsigned clicked )
     {
         if ( clicked == 1 ) {

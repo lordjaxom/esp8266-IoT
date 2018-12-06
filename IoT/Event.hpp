@@ -2,6 +2,7 @@
 #define ESP8266_IOT_EVENT_HPP
 
 #include <functional>
+#include <vector>
 
 namespace iot {
 
