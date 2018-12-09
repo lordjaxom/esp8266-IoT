@@ -9,12 +9,12 @@
 
 iot::IoT IoT;
 iot::WiFi wiFi( IoT, "akvsoft", "sacomoco02047781" );
-iot::MQTT mqtt( IoT, wiFi, "192.168.178.28", 1883, "Untitled" );
+iot::MQTT mqtt( wiFi, "192.168.178.28", 1883, "Kellerflur/Treppe" );
 
 iot::PushButton button( IoT, iot::debounce( [] { return digitalRead( 0 ) == LOW; } ));
-iot::Device output( IoT, "Untitled/Output", []( bool value ) { digitalWrite( 2, static_cast< uint8_t >( value ? LOW : HIGH )); } );
+iot::Device output( IoT, "Kellerflur/Treppe", []( bool value ) { digitalWrite( 2, static_cast< uint8_t >( value ? LOW : HIGH )); } );
 
-iot::SceneManager sceneManager( IoT, "Untitled" );
+iot::SceneManager sceneManager( IoT, "Kellerflur" );
 
 void setup()
 {
@@ -24,7 +24,7 @@ void setup()
 
     button.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
 
-    sceneManager.addSceneDevice( output );
+    sceneManager.addSceneDevice( output, { iot::Scene::SCENE1, iot::Scene::SCENE2 }, { iot::Scene::OFF, iot::Scene::SLEEP } );
 
     IoT.begin();
 }

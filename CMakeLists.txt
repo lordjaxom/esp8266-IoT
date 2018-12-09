@@ -13,7 +13,7 @@ link_libraries(IoT)
 
 add_subdirectory(ledgraph)
 
-add_esp8266_executable(untitled FLASH 512k untitled.cpp)
+add_esp8266_executable(KellerflurTreppe FLASH 512k KellerflurTreppe.cpp)
 add_esp8266_executable(Colin FLASH 4M Colin.cpp)
 add_esp8266_executable(Vorratskeller FLASH 4M Vorratskeller.cpp)
 add_esp8266_executable(Kueche FLASH 512k Kueche.cpp)
