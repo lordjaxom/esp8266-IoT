@@ -5,8 +5,6 @@
 #include "IoT/PushButton.hpp"
 #include "IoT/SceneManager.hpp"
 
-using namespace iot;
-
 iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Kellerflur/Treppe" );
 
 iot::PushButton button( IoT, iot::debounce( [] { return digitalRead( 0 ) == LOW; } ));
@@ -22,7 +20,7 @@ void setup()
 
     button.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
 
-    sceneManager.addSceneDevice( output, iot::scenes( iot::Scene::SCENE1, iot::Scene::SCENE2 ), { iot::Scene::OFF, iot::Scene::SLEEP } );
+    sceneManager.addSceneDeviceEx( output, { iot::Scene::SCENE1, iot::Scene::SCENE2 } );
 
     IoT.begin();
 }

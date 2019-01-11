@@ -2,14 +2,10 @@
 #include "IoT/Device.hpp"
 #include "IoT/IoT.hpp"
 #include "IoT/Logger.hpp"
-#include "IoT/MQTT.hpp"
 #include "IoT/PushButton.hpp"
 #include "IoT/SceneManager.hpp"
-#include "IoT/WiFi.hpp"
 
-iot::IoT IoT;
-iot::WiFi wiFi( IoT, "akvsoft", "sacomoco02047781" );
-iot::MQTT mqtt( IoT, wiFi, "192.168.178.28", 1883, "ColinWZ" );
+iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "ColinWZ" );
 
 iot::PushButton button( IoT, iot::debounce( [] { return digitalRead( 12 ) == LOW; } ));
 iot::Device output( IoT, "ColinWZ/DeckenLED", []( bool value ) { digitalWrite( 5, static_cast< uint8_t >( value ? HIGH : LOW )); } );

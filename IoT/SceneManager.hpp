@@ -1,6 +1,7 @@
 #ifndef ESP8266_IOT_SCENEMANAGER_HPP
 #define ESP8266_IOT_SCENEMANAGER_HPP
 
+#include <algorithm>
 #include <map>
 #include <vector>
 
@@ -19,26 +20,32 @@ namespace iot {
         UNKNOWN = 0xff
     };
 
-    template< typename... Scene >
-    struct Scenes
-    {
-    };
-
-    template< typename... Scene >
-    Scenes< Scene... > scenes( Scene... );
+    static constexpr Scene allScenes[] { Scene::OFF, Scene::SCENE1, Scene::SCENE2, Scene::SLEEP };
 
     class SceneManager
     {
+
     public:
         SceneManager( IoT& iot, char const* zone ) noexcept;
         SceneManager( SceneManager const& ) = delete;
 
         void addSceneEvent( Scene scene, std::function< void() > handler );
 
-        template< typename Device, typename OnScenes, typename OffScenes = Scenes<> >
-        void addSceneDeviceX( Device& device, OnScenes, OffScenes = OffScenes() )
+        template< typename Device >
+        void addSceneDeviceEx( Device& device, std::vector< Scene > const& onScenes, std::vector< Scene > const& ignoredScenes = {} )
         {
+            for ( auto scene : onScenes ) {
+                sceneEvents_[scene] += [&device] { device.set( true ); };
+            }
 
+            std::vector< Scene > offScenes( allScenes, allScenes + sizeof( allScenes ) / sizeof( allScenes[0] ));
+            offScenes.erase( std::remove_if( offScenes.begin(), offScenes.end(), [&]( Scene scene ) {
+                return std::find( onScenes.begin(), onScenes.end(), scene ) != onScenes.end() ||
+                       std::find( ignoredScenes.begin(), ignoredScenes.end(), scene ) != ignoredScenes.end();
+            } ));
+            for ( auto scene : offScenes ) {
+                sceneEvents_[scene] += [&device] { device.set( false ); };
+            }
         }
 
         template< typename Device >
