@@ -8,10 +8,11 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
 
+#include "Timer.hpp"
+
 namespace iot {
 
     class IoT;
-
     class WiFi;
 
     class MQTT
@@ -27,6 +28,8 @@ namespace iot {
     private:
         static MQTT* instance;
 
+        void connect();
+        void reconnect();
         void loop();
 
         char const* ip_;
@@ -34,6 +37,7 @@ namespace iot {
         char const* clientId_;
         WiFiClient wiFiClient_;
         PubSubClient pubSubClient_;
+        Timer reconnectTimer_;
         std::map< String, std::function< void( String message ) > > subscriptions_;
     };
 

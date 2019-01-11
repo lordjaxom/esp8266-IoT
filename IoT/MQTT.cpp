@@ -39,11 +39,13 @@ namespace iot {
               ip_( ip ),
               port_( port ),
               clientId_( clientId ),
-              pubSubClient_( ip_, port_, wiFiClient_ )
+              pubSubClient_( ip_, port_, wiFiClient_ ),
+              reconnectTimer_( iot )
     {
         instance = this;
 
         iot.loopAlwaysEvent += [this] { this->loop(); };
+        reconnectTimer_.expiredEvent += [this] { this->connect(); };
 
         pubSubClient_.setCallback( [this]( char* topic, uint8_t* payload, unsigned length ) {
             String message;
@@ -56,22 +58,34 @@ namespace iot {
         } );
     }
 
+    void MQTT::connect()
+    {
+        log( "connecting to MQTT broker at ", ip_, " as ", clientId_ );
+        if ( pubSubClient_.connect( clientId_ )) {
+            log( "connection to MQTT broker established" );
+            for ( auto const& subscription : subscriptions_ ) {
+                pubSubClient_.subscribe( subscription.first.c_str());
+            }
+        } else {
+            log( "ERROR connecting to MQTT broker: ", pubSubClient_.state());
+            reconnectTimer_.start( 1000 );
+        }
+    }
+
+    void MQTT::reconnect()
+    {
+        if ( !reconnectTimer_.active()) {
+            connect();
+        }
+    }
+
     void MQTT::loop()
     {
         if ( !pubSubClient_.connected()) {
-            log( "connecting to MQTT broker at ", ip_, " as ", clientId_ );
-            if ( pubSubClient_.connect( clientId_ )) {
-                log( "connection to MQTT broker established" );
-
-                for ( auto const& subscription : subscriptions_ ) {
-                    pubSubClient_.subscribe( subscription.first.c_str());
-                }
-            } else {
-                log( "ERROR connecting to MQTT broker: ", pubSubClient_.state());
-                return;
-            }
+            reconnect();
+        } else {
+            pubSubClient_.loop();
         }
-        pubSubClient_.loop();
     }
 
 } // namespace iot

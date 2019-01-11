@@ -30,8 +30,6 @@ iot::SceneManager sceneManager( IoT, "Kellerflur" );
 //iot::Input motionInput( IoT, [] { return digitalRead( 0 ) == HIGH; } );
 //iot::Device motionDevice( IoT, "Kellerflur", "MOTION", "NO", "YES" );
 
-bool lastMotion;
-
 void setup()
 {
     pinMode( 0, INPUT );
@@ -61,12 +59,6 @@ void setup()
                 break;
         }
         neoPixelBus.Show();
-
-//        bool motion = digitalRead( 0 ) == HIGH;
-//        if ( motion != lastMotion ) {
-//            motionDevice.set( motion );
-//            lastMotion = motion;
-//        }
     };
     IoT.begin();
 }
