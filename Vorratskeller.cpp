@@ -3,14 +3,10 @@
 #include "IoT/Input.hpp"
 #include "IoT/IoT.hpp"
 #include "IoT/Logger.hpp"
-#include "IoT/MQTT.hpp"
 #include "IoT/PushButton.hpp"
 #include "IoT/SceneManager.hpp"
-#include "IoT/WiFi.hpp"
 
-iot::IoT IoT;
-iot::WiFi wiFi( IoT, "akvsoft", "sacomoco02047781" );
-iot::MQTT mqtt( wiFi, "192.168.178.28", 1883, "Vorratskeller" );
+iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Vorratskeller" );
 
 iot::PushButton button1( IoT, iot::debounce( [] { return digitalRead( 14 ) == LOW; } ));
 iot::Device output1( IoT, "Vorratskeller/Deckenlampe",

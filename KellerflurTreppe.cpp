@@ -2,14 +2,12 @@
 #include "IoT/Device.hpp"
 #include "IoT/IoT.hpp"
 #include "IoT/Logger.hpp"
-#include "IoT/MQTT.hpp"
 #include "IoT/PushButton.hpp"
 #include "IoT/SceneManager.hpp"
-#include "IoT/WiFi.hpp"
 
-iot::IoT IoT;
-iot::WiFi wiFi( IoT, "akvsoft", "sacomoco02047781" );
-iot::MQTT mqtt( wiFi, "192.168.178.28", 1883, "Kellerflur/Treppe" );
+using namespace iot;
+
+iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Kellerflur/Treppe" );
 
 iot::PushButton button( IoT, iot::debounce( [] { return digitalRead( 0 ) == LOW; } ));
 iot::Device output( IoT, "Kellerflur/Treppe", []( bool value ) { digitalWrite( 2, static_cast< uint8_t >( value ? LOW : HIGH )); } );
@@ -24,7 +22,7 @@ void setup()
 
     button.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
 
-    sceneManager.addSceneDevice( output, { iot::Scene::SCENE1, iot::Scene::SCENE2 }, { iot::Scene::OFF, iot::Scene::SLEEP } );
+    sceneManager.addSceneDevice( output, iot::scenes( iot::Scene::SCENE1, iot::Scene::SCENE2 ), { iot::Scene::OFF, iot::Scene::SLEEP } );
 
     IoT.begin();
 }

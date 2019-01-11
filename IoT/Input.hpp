@@ -12,7 +12,8 @@ namespace iot {
     class Input
     {
     public:
-        Input( IoT& iot, std::function< bool() > input );
+        Input( IoT& iot, std::function< bool() > input ) noexcept;
+        Input( Input const& ) = delete;
 
         Event< void( bool ) > changeEvent;
 

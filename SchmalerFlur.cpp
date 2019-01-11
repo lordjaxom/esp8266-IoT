@@ -3,10 +3,8 @@
 #include "IoT/Device.hpp"
 #include "IoT/Input.hpp"
 #include "IoT/IoT.hpp"
-#include "IoT/MQTT.hpp"
 #include "IoT/Pcf8574.hpp"
 #include "IoT/SceneManager.hpp"
-#include "IoT/WiFi.hpp"
 #include "IoT/Wire.hpp"
 
 #include "ledgraph/fill_animation.hpp"
@@ -19,9 +17,7 @@ unsigned neoPixelState;
 auto onAnimation = fillAnimation( neoPixelBuffer, 0xffffff );
 auto buntAnimation = warpAnimation< 10, 40, 20, 25, 100, 25 >( neoPixelBuffer );
 
-iot::IoT IoT;
-iot::WiFi wiFi( IoT, "akvsoft", "sacomoco02047781" );
-iot::MQTT mqtt( wiFi, "192.168.178.28", 1883, "SchmalerFlur/Garderobe" );
+iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "SchmalerFlur/Garderobe" );
 
 iot::Device ledstreifenWeiss( IoT, "SchmalerFlur/GarderobeWeiss" );
 iot::Device ledstreifenBunt( IoT, "SchmalerFlur/GarderobeBunt" );

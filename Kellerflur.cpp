@@ -3,10 +3,8 @@
 #include "IoT/Device.hpp"
 #include "IoT/Input.hpp"
 #include "IoT/IoT.hpp"
-#include "IoT/MQTT.hpp"
 #include "IoT/Pcf8574.hpp"
 #include "IoT/SceneManager.hpp"
-#include "IoT/WiFi.hpp"
 #include "IoT/Wire.hpp"
 
 #include "ledgraph/fill_animation.hpp"
@@ -19,16 +17,14 @@ unsigned neoPixelState;
 auto onAnimation = fillAnimation( neoPixelBuffer, 0xffffff );
 auto buntAnimation = warpAnimation( neoPixelBuffer );
 
-iot::IoT IoT;
-iot::WiFi wiFi( IoT, "akvsoft", "sacomoco02047781" );
-iot::MQTT mqtt( wiFi, "192.168.178.28", 1883, "Kellerflur/WerkstattStripe" );
+iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Kellerflur/WerkstattStripe" );
 
 iot::Device ledstreifenWeiss( IoT, "Kellerflur/WerkstattStripeWeiss" );
 iot::Device ledstreifenBunt( IoT, "Kellerflur/WerkstattStripeBunt" );
 iot::SceneManager sceneManager( IoT, "Kellerflur" );
 
-//iot::Input motionInput( IoT, [] { return digitalRead( 0 ) == HIGH; } );
-//iot::Device motionDevice( IoT, "Kellerflur", "MOTION", "NO", "YES" );
+iot::Input motionInput( IoT, [] { return digitalRead( 0 ) == HIGH; } );
+iot::Device motionDevice( IoT, "Kellerflur", "MOTION", "NO", "YES" );
 
 void setup()
 {
@@ -44,7 +40,7 @@ void setup()
     sceneManager.addSceneDevice( ledstreifenWeiss, { iot::Scene::SCENE1, iot::Scene::SCENE2 }, { iot::Scene::SLEEP, iot::Scene::OFF } );
     sceneManager.addSceneDevice( ledstreifenBunt, { iot::Scene::OFF }, { iot::Scene::SLEEP, iot::Scene::SCENE1, iot::Scene::SCENE2 } );
 
-//    motionInput.changeEvent += []( bool value ) { motionDevice.set( value ); };
+    motionInput.changeEvent += []( bool value ) { motionDevice.set( value ); };
 
     IoT.loopTickEvent += [] {
         switch ( neoPixelState ) {

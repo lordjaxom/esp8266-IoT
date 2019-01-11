@@ -1,15 +1,18 @@
+#include <utility>
+
 #include "IoT.hpp"
 #include "Logger.hpp"
 #include "PushButton.hpp"
 
+using namespace std;
+
 namespace iot {
 
-    PushButton::PushButton( IoT& iot, std::function< bool() > input ) noexcept
-            : input_( std::move( input )),
-              timer_( iot )
+    PushButton::PushButton( IoT& iot, function< bool() > input ) noexcept
+            : input_( move( input )),
+              timer_( iot, [this] { expired(); } )
     {
         iot.loopTickEvent += [this] { this->loop(); };
-        timer_.expiredEvent += [this] { this->expired(); };
     }
 
     void PushButton::loop()

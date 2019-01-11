@@ -14,10 +14,12 @@ namespace iot {
                 std::function< void( bool value ) > action ) noexcept;
         Device( IoT& iot, char const* name, char const* stateName, char const* falseValue = "OFF", char const* trueValue = "ON" ) noexcept;
         Device( IoT& iot, char const* name, std::function< void( bool value ) > action = []( bool ) {} ) noexcept;
+        Device( Device const& ) = delete;
 
         void set( bool value );
 
     private:
+        IoT& iot_;
         char const* name_;
         char const* stateName_;
         char const* falseValue_;

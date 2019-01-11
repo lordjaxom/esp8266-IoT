@@ -3,14 +3,10 @@ add_library(IoT STATIC
         IoT.cpp
         IoT.hpp
         Logger.hpp
-        MQTT.cpp
-        MQTT.hpp
         PushButton.cpp
         PushButton.hpp
         Timer.cpp
         Timer.hpp
-        WiFi.cpp
-        WiFi.hpp
         SceneManager.cpp
         SceneManager.hpp
         String.hpp
@@ -22,4 +18,6 @@ add_library(IoT STATIC
         Pcf8574.cpp
         Pcf8574.hpp
         Wire.cpp
-        Wire.hpp)
+        Wire.hpp
+        AvrI2C.cpp
+        AvrI2C.hpp)

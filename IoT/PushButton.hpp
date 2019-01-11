@@ -2,7 +2,6 @@
 #define ESP8266_IOT_PUSHBUTTON_HPP
 
 #include <functional>
-#include <utility>
 
 #include "Event.hpp"
 #include "Timer.hpp"
@@ -15,6 +14,7 @@ namespace iot {
     {
     public:
         PushButton( IoT& iot, std::function< bool() > input ) noexcept;
+        PushButton( PushButton const& ) = delete;
 
         Event< void( unsigned clicks ) > clickedEvent;
 

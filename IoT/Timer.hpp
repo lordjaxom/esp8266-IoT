@@ -2,9 +2,6 @@
 #define ESP8266_IOT_TIMER_HPP
 
 #include <functional>
-#include <utility>
-
-#include "Event.hpp"
 
 namespace iot {
 
@@ -13,18 +10,18 @@ namespace iot {
     class Timer
     {
     public:
-        explicit Timer( IoT& iot ) noexcept;
+        Timer( IoT& iot, std::function< void() > handler ) noexcept;
+        Timer( Timer const& ) = delete;
 
         bool active() const { return timeout_ > 0; }
 
         void start( uint32_t timeout );
         void stop();
 
-        Event< void() > expiredEvent;
-
     private:
         void loop();
 
+        std::function< void() > handler_;
         uint32_t timeout_ {};
     };
 

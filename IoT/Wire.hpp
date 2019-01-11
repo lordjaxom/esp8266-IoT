@@ -9,6 +9,7 @@ namespace iot {
     {
     public:
         Wire( IoT& iot, int sda, int scl ) noexcept;
+        Wire( Wire const& ) = delete;
 
         IoT& iot;
 

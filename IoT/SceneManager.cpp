@@ -1,8 +1,11 @@
+#include <utility>
+
 #include "IoT.hpp"
 #include "Logger.hpp"
-#include "MQTT.hpp"
 #include "SceneManager.hpp"
 #include "String.hpp"
+
+using namespace std;
 
 namespace iot {
 
@@ -35,7 +38,7 @@ namespace iot {
             : iot_( iot ),
               zone_( zone )
     {
-        MQTT::subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { this->sceneCommand( message ); } );
+        iot_.subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { sceneCommand( message ); } );
     }
 
     void SceneManager::addSceneEvent( Scene scene, std::function< void() > handler )
@@ -62,6 +65,23 @@ namespace iot {
         }
     }
 
+    void SceneManager::addRemoteDevice( String name )
+    {
+        auto it = remoteDevices_.emplace( move( name ), false );
+
+        iot_.subscribe( str( "stat/", zone_, "/", it.first->first.c_str(), "/POWER" ),
+                        [this, &name = it.first->first]( String message ) { remoteDevices_.find( name )->second = message == "ON"; } );
+    }
+
+    void SceneManager::remoteDeviceButtonClicked( String const& name, unsigned clicked )
+    {
+        if ( clicked == 1 ) {
+            iot_.publish( str( "cmnd/", zone_, "/", name.c_str(), "/POWER" ), remoteDevices_.find( name )->second ? "OFF" : "ON" );
+        } else {
+            sceneButtonClicked( clicked );
+        }
+    }
+
     void SceneManager::changeScene( Scene scene, bool publish )
     {
         log( "switching to scene ", scene, " in zone ", zone_ );
@@ -70,7 +90,7 @@ namespace iot {
         scene_ = scene;
 
         if ( publish ) {
-            MQTT::publish( str( "stat/", zone_, "/LIGHTSCENE" ), toString( scene_ ));
+            iot_.publish( str( "stat/", zone_, "/LIGHTSCENE" ), toString( scene_ ));
         }
     }
 
