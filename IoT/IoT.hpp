@@ -28,8 +28,6 @@ namespace iot {
         void publish( String topic, String payload );
         void subscribe( String topic, std::function< void( String message ) > handler );
 
-        void enqueue( std::function< void () > action );
-
         Event< void() > beginEvent;
         Event< void() > loopAlwaysEvent;
         Event< void() > loopTickEvent;
@@ -59,7 +57,6 @@ namespace iot {
         std::map< String, std::function< void ( String payload ) > > mqttSubscriptions_;
 
         uint32_t lastLoop_ {};
-        std::deque< std::function< void() > > queue_;
     };
 
 } // namespace iot

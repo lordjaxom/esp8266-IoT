@@ -53,11 +53,6 @@ namespace iot {
         if ( elapsed > tick ) {
             lastLoop_ = timestamp;
             loopTickEvent();
-
-            if ( !queue_.empty()) {
-                queue_.front()();
-                queue_.pop_front();
-            }
         }
     }
 
@@ -65,19 +60,12 @@ namespace iot {
     {
         log( "publishing ", payload, " to ", topic );
 
-        enqueue( [this, topic = move( topic ), payload = move( payload )] {
-            mqttClient_.publish( topic.c_str(), 1, false, payload.c_str());
-        } );
+        mqttClient_.publish( topic.c_str(), 1, false, payload.c_str());
     }
 
     void IoT::subscribe( String topic, std::function< void( String message ) > handler )
     {
         mqttSubscriptions_.emplace( move( topic ), move( handler ));
-    }
-
-    void IoT::enqueue( function< void() > action )
-    {
-        queue_.push_back( move( action ));
     }
 
     void IoT::connectToWiFi()
