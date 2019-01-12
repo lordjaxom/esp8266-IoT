@@ -2,7 +2,6 @@
 #define ESP8266_IOT_IOT_HPP
 
 #include <stdint.h>
-#include <deque>
 #include <functional>
 #include <map>
 
