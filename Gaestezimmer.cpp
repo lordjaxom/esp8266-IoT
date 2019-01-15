@@ -20,8 +20,8 @@ void setup()
 {
     button.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
 
-    sceneManager.addSceneDevice( schwarzlicht, { iot::Scene::SCENE2 }, { iot::Scene::SLEEP, iot::Scene::OFF, iot::Scene::SCENE1 } );
-    sceneManager.addSceneDevice( deckenlampe, { iot::Scene::SCENE1 }, { iot::Scene::SLEEP, iot::Scene::OFF, iot::Scene::SCENE2 } );
+    sceneManager.addSceneDevice( schwarzlicht, { iot::Scene::SCENE2 } );
+    sceneManager.addSceneDevice( deckenlampe, { iot::Scene::SCENE1 } );
 
     IoT.begin();
 }

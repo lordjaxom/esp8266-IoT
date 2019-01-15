@@ -20,7 +20,7 @@ void setup()
 
     button.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
 
-    sceneManager.addSceneDeviceEx( output, { iot::Scene::SCENE1, iot::Scene::SCENE2 } );
+    sceneManager.addSceneDevice( output, { iot::Scene::SCENE1, iot::Scene::SCENE2 } );
 
     IoT.begin();
 }

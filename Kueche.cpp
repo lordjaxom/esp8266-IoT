@@ -34,20 +34,17 @@ iot::Pcf8574 pcf8574Input( wire, 57, 0x00 );
 
 array< String, 7 > topicDeviceNames;
 vector< iot::PushButton > buttons;
-vector< iot::Device> outputs;
+vector< iot::Device > outputs;
 
 iot::SceneManager sceneManager( IoT, "Kueche" );
 
 void setup()
 {
     for ( uint8_t i = 0; i < 7; ++i ) {
-        topicDeviceNames[i] = iot::str( "Kueche/", deviceName( i ));
-        buttons.emplace_back( IoT, iot::debounce( [i] { return !pcf8574Input.read( i ); } ));
-        outputs.emplace_back( IoT, topicDeviceNames[i], [i]( bool value ) { pcf8574Output.set( i, value ); } );
+//        topicDeviceNames[i] = iot::str( "Kueche/", deviceName( i ));
+//        buttons.emplace_back( IoT, iot::debounce( [i] { return !pcf8574Input.read( i ); } ));
+//        outputs.emplace_back( IoT, topicDeviceNames[i].c_str(), [i]( bool value ) { pcf8574Output.set( i, value ); } );
 
-        buttons[i].clickedEvent +=
-                
-                sceneManager.addSceneDevice( outputs[i], {}, { iot::Scene::OFF})
     }
 
     IoT.begin();

@@ -34,8 +34,8 @@ void setup()
     sceneManager.addSceneEvent( iot::Scene::SCENE1, [] { neoPixelState = 2; } );
     sceneManager.addSceneEvent( iot::Scene::SCENE2, [] { neoPixelState = 2; } );
 
-    sceneManager.addSceneDevice( ledstreifenWeiss, { iot::Scene::SCENE1, iot::Scene::SCENE2 }, { iot::Scene::SLEEP, iot::Scene::OFF } );
-    sceneManager.addSceneDevice( ledstreifenBunt, { iot::Scene::OFF }, { iot::Scene::SLEEP, iot::Scene::SCENE1, iot::Scene::SCENE2 } );
+    sceneManager.addSceneDevice( ledstreifenWeiss, { iot::Scene::SCENE1, iot::Scene::SCENE2 } );
+    sceneManager.addSceneDevice( ledstreifenBunt, { iot::Scene::OFF } );
 
     IoT.loopTickEvent += [] {
         switch ( neoPixelState ) {

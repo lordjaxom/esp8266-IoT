@@ -34,6 +34,16 @@ namespace iot {
         return Scene::UNKNOWN;
     }
 
+    vector< Scene > offScenes( vector< Scene > const& onScenes, vector< Scene > const& ignoredScenes )
+    {
+        vector< Scene > offScenes( allScenes, allScenes + sizeof( allScenes ) / sizeof( allScenes[0] ));
+        offScenes.erase( remove_if( offScenes.begin(), offScenes.end(), [&]( Scene scene ) {
+            return find( onScenes.begin(), onScenes.end(), scene ) != onScenes.end() ||
+                   find( ignoredScenes.begin(), ignoredScenes.end(), scene ) != ignoredScenes.end();
+        } ), offScenes.end());
+        return offScenes;
+    }
+
     SceneManager::SceneManager( IoT& iot, char const* zone )
             : iot_( iot ),
               zone_( zone )
@@ -41,7 +51,7 @@ namespace iot {
         iot_.subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { changeScene( message ); } );
     }
 
-    void SceneManager::addSceneEvent( Scene scene, std::function< void() > handler )
+    void SceneManager::addSceneEvent( Scene scene, function< void() > handler )
     {
         sceneEvents_[scene] += move( handler );
     }

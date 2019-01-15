@@ -22,6 +22,8 @@ namespace iot {
 
     static constexpr Scene allScenes[] { Scene::OFF, Scene::SCENE1, Scene::SCENE2, Scene::SLEEP };
 
+    std::vector< Scene > offScenes( std::vector< Scene > const& onScenes, std::vector< Scene > const& ignoredScenes );
+
     class SceneManager
     {
 
@@ -32,37 +34,15 @@ namespace iot {
         void addSceneEvent( Scene scene, std::function< void() > handler );
 
         template< typename Device >
-        void addSceneDeviceEx( Device& device, std::vector< Scene > const& onScenes, std::vector< Scene > const& ignoredScenes = {} )
+        void addSceneDevice( Device& device, std::vector< Scene > const& onScenes = { Scene::SCENE1 },
+                             std::vector< Scene > const& ignoredScenes = {} )
         {
             for ( auto scene : onScenes ) {
                 sceneEvents_[scene] += [&device] { device.set( true ); };
             }
-
-            std::vector< Scene > offScenes( allScenes, allScenes + sizeof( allScenes ) / sizeof( allScenes[0] ));
-            offScenes.erase( std::remove_if( offScenes.begin(), offScenes.end(), [&]( Scene scene ) {
-                return std::find( onScenes.begin(), onScenes.end(), scene ) != onScenes.end() ||
-                       std::find( ignoredScenes.begin(), ignoredScenes.end(), scene ) != ignoredScenes.end();
-            } ));
-            for ( auto scene : offScenes ) {
+            for ( auto scene : offScenes( onScenes, ignoredScenes )) {
                 sceneEvents_[scene] += [&device] { device.set( false ); };
             }
-        }
-
-        template< typename Device >
-        void addSceneDevice( Device& device, std::vector< Scene > const& onScenes, std::vector< Scene > const& offScenes )
-        {
-            for ( auto scene : onScenes ) {
-                sceneEvents_[scene] += [&device] { device.set( true ); };
-            }
-            for ( auto scene : offScenes ) {
-                sceneEvents_[scene] += [&device] { device.set( false ); };
-            }
-        }
-
-        template< typename Device >
-        void addSceneDevice( Device& device )
-        {
-            addSceneDevice( device, { Scene::SCENE1 }, { Scene::SLEEP, Scene::OFF, Scene::SCENE2 } );
         }
 
         void sceneButtonClicked( unsigned clicked );
