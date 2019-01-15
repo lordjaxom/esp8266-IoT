@@ -66,20 +66,19 @@ namespace iot {
         }
 
         void sceneButtonClicked( unsigned clicked );
-        void sceneCommand( String const& sceneName );
 
         void addRemoteDevice( String name );
 
         void remoteDeviceButtonClicked( String const& name, unsigned clicked );
 
     private:
+        void changeScene( String const& sceneName );
         void changeScene( Scene scene, bool publish = true );
 
         IoT& iot_;
         char const* zone_;
         Scene scene_ {};
-        std::map< Scene, Event < void() > >
-        sceneEvents_;
+        std::map< Scene, Event < void() > > sceneEvents_;
         std::map< String, bool > remoteDevices_;
     };
 

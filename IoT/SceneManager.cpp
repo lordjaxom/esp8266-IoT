@@ -38,7 +38,7 @@ namespace iot {
             : iot_( iot ),
               zone_( zone )
     {
-        iot_.subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { sceneCommand( message ); } );
+        iot_.subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { changeScene( message ); } );
     }
 
     void SceneManager::addSceneEvent( Scene scene, std::function< void() > handler )
@@ -54,14 +54,6 @@ namespace iot {
             changeScene( static_cast< Scene >( static_cast< uint8_t >( Scene::OFF ) + clicked ));
         } else if ( clicked == 0 ) {
             changeScene( Scene::SLEEP );
-        }
-    }
-
-    void SceneManager::sceneCommand( String const& sceneName )
-    {
-        Scene scene = toScene( sceneName );
-        if ( scene != Scene::UNKNOWN ) {
-            changeScene( scene, true );
         }
     }
 
@@ -82,16 +74,24 @@ namespace iot {
         }
     }
 
+    void SceneManager::changeScene( String const& sceneName )
+    {
+        Scene scene = toScene( sceneName );
+        if ( scene != Scene::UNKNOWN ) {
+            changeScene( scene, false );
+        }
+    }
+
     void SceneManager::changeScene( Scene scene, bool publish )
     {
         log( "switching to scene ", scene, " in zone ", zone_ );
 
         sceneEvents_[scene]();
-        scene_ = scene;
-
         if ( publish ) {
-            iot_.publish( str( "stat/", zone_, "/LIGHTSCENE" ), toString( scene_ ));
+            iot_.publish( str( "cmnd/", zone_, "/LIGHTSCENE" ), toString( scene ));
         }
+
+        scene_ = scene;
     }
 
 } // namespace iot
