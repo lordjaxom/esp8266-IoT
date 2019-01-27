@@ -6,12 +6,12 @@
 #include "IoT/PushButton.hpp"
 #include "IoT/SceneManager.hpp"
 
-iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "ColinWZ" );
+IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "ColinWZ" );
 
-iot::PushButton button( IoT, iot::debounce( iot::GpioInput( IoT, 12 )));
-iot::Device output( IoT, "ColinWZ/DeckenLED", iot::GpioOutput( IoT, 5 ));
+PushButton button( debounce( GpioInput( 12 )));
+Device output( "ColinWZ/DeckenLED", GpioOutput( 5 ));
 
-iot::SceneManager sceneManager( IoT, "ColinWZ" );
+SceneManager sceneManager( "ColinWZ" );
 
 void setup()
 {

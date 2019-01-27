@@ -4,40 +4,38 @@
 #include <functional>
 #include <vector>
 
-namespace iot {
 
-    template< typename Signature >
-    class Event;
+template< typename Signature >
+class Event;
 
-    template< typename ...Args >
-    class Event< void( Args... ) > final
+template< typename ...Args >
+class Event< void( Args... ) > final
+{
+public:
+    using Signature = void( Args... );
+    using Handler = std::function< Signature >;
+
+    Event() noexcept {}
+
+    Event( Event const& ) = delete;
+
+    Event& operator+=( Handler handler )
     {
-    public:
-        using Signature = void( Args... );
-        using Handler = std::function< Signature >;
+        handlers_.push_back( std::move( handler ));
+        return *this;
+    }
 
-        Event() noexcept {}
-
-        Event( Event const& ) = delete;
-
-        Event& operator+=( Handler handler )
-        {
-            handlers_.push_back( std::move( handler ));
-            return *this;
+    template< typename ...T >
+    void operator()( T&& ... args )
+    {
+        for ( auto const& handler : handlers_ ) {
+            handler( std::forward< T >( args )... );
         }
+    }
 
-        template< typename ...T >
-        void operator()( T&&... args )
-        {
-            for ( auto const& handler : handlers_ ) {
-                handler( std::forward< T >( args )... );
-            }
-        }
+private:
+    std::vector< Handler > handlers_;
+};
 
-    private:
-        std::vector< Handler > handlers_;
-    };
-
-} // namespace iot
 
 #endif // ESP8266_IOT_EVENT_HPP

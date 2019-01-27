@@ -41,22 +41,22 @@ static constexpr char const* deviceNames[] = {
 };
 static constexpr size_t deviceCount = sizeof( deviceNames ) / sizeof( deviceNames[0] );
 
-iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Vorratskeller" );
+IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Vorratskeller" );
 
-iot::WireConfig wireConfig( IoT, 2, 0 );
-iot::Pcf8574 pcf8574Output( wireConfig, 56, 0xff );
-iot::Pcf8574 pcf8574Input( wireConfig, 57, 0x00 );
+WireConfig wireConfig( 2, 0 );
+Pcf8574 pcf8574Output( wireConfig, 56, 0xff );
+Pcf8574 pcf8574Input( wireConfig, 57, 0x00 );
 
-StaticVector< iot::PushButton, deviceCount > buttons;
-StaticVector< iot::Device, deviceCount > outputs;
+StaticVector< PushButton, deviceCount > buttons;
+StaticVector< Device, deviceCount > outputs;
 
-iot::SceneManager sceneManager( IoT, "Kueche" );
+SceneManager sceneManager( "Kueche" );
 
 void setup()
 {
     for ( uint8_t i = 0; i < 7; ++i ) {
-        auto& button = buttons.emplace( IoT, iot::debounce( [i] { return !pcf8574Input.read( i ); } ));
-        auto& output = outputs.emplace( IoT, iot::str( "Kueche/", deviceNames[i] ), [i]( bool value ) { pcf8574Output.set( i, value ); } );
+        auto& button = buttons.emplace( debounce( [i] { return !pcf8574Input.read( i ); } ));
+        auto& output = outputs.emplace( str( "Kueche/", deviceNames[i] ), [i]( bool value ) { pcf8574Output.set( i, value ); } );
 
         sceneManager.addLocalDevice( output );
 

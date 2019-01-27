@@ -9,12 +9,12 @@
 static constexpr uint8_t buttonPin = 0; // 12
 static constexpr uint8_t outputPin = 5;
 
-iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Untitled" );
+IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Untitled" );
 
-iot::PushButton button( IoT, iot::debounce( iot::GpioInput( IoT, buttonPin )));
-iot::Device output( IoT, "Untitled/Output", iot::GpioOutput( IoT, outputPin ));
+PushButton button( debounce( GpioInput( buttonPin )));
+Device output( "Untitled/Output", GpioOutput( outputPin ));
 
-iot::SceneManager sceneManager( IoT, "Untitled" );
+SceneManager sceneManager( "Untitled" );
 
 void setup()
 {

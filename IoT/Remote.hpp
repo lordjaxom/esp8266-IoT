@@ -1,27 +1,24 @@
 #ifndef ESP8266_IOT_REMOTE_HPP
 #define ESP8266_IOT_REMOTE_HPP
 
-namespace iot {
 
-    class IoT;
+class Remote
+{
+public:
+    explicit Remote( String name ) noexcept;
 
-    class Remote
-    {
-    public:
-        Remote( IoT& iot, String name );
+    String const& name() const { return name_; }
 
-        String const& name() const { return name_; }
+    bool get() const { return value_; }
 
-        bool get() const { return value_; }
-        void set( bool value );
-        void toggle() { set( !value_ ); }
+    void set( bool value );
 
-    private:
-        IoT& iot_;
-        String name_;
-        bool value_ {};
-    };
+    void toggle() { set( !value_ ); }
 
-} // namespace iot
+private:
+    String name_;
+    bool value_ {};
+};
+
 
 #endif // ESP8266_IOT_REMOTE_HPP

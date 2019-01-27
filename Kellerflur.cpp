@@ -17,14 +17,14 @@ unsigned neoPixelState;
 auto onAnimation = fillAnimation( neoPixelBuffer, 0xffffff );
 auto buntAnimation = warpAnimation( neoPixelBuffer );
 
-iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Kellerflur/WerkstattStripe" );
+IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Kellerflur/WerkstattStripe" );
 
-iot::Device ledstreifenWeiss( IoT, "Kellerflur/WerkstattStripeWeiss" );
-iot::Device ledstreifenBunt( IoT, "Kellerflur/WerkstattStripeBunt" );
-iot::SceneManager sceneManager( IoT, "Kellerflur" );
+Device ledstreifenWeiss( "Kellerflur/WerkstattStripeWeiss" );
+Device ledstreifenBunt( "Kellerflur/WerkstattStripeBunt" );
+SceneManager sceneManager( "Kellerflur" );
 
-iot::Input motionInput( IoT, [] { return digitalRead( 0 ) == HIGH; } );
-iot::Device motionDevice( IoT, "Kellerflur", "MOTION", "NO", "YES" );
+Input motionInput( [] { return digitalRead( 0 ) == HIGH; } );
+Device motionDevice( "Kellerflur", "MOTION", "NO", "YES" );
 
 void setup()
 {
@@ -32,13 +32,13 @@ void setup()
 
     neoPixelBus.Begin();
 
-    sceneManager.addSceneEvent( iot::Scene::SLEEP, [] { neoPixelState = 0; } );
-    sceneManager.addSceneEvent( iot::Scene::OFF, [] { neoPixelState = 1; } );
-    sceneManager.addSceneEvent( iot::Scene::SCENE1, [] { neoPixelState = 2; } );
-    sceneManager.addSceneEvent( iot::Scene::SCENE2, [] { neoPixelState = 2; } );
+    sceneManager.addSceneEvent( Scene::SLEEP, [] { neoPixelState = 0; } );
+    sceneManager.addSceneEvent( Scene::OFF, [] { neoPixelState = 1; } );
+    sceneManager.addSceneEvent( Scene::SCENE1, [] { neoPixelState = 2; } );
+    sceneManager.addSceneEvent( Scene::SCENE2, [] { neoPixelState = 2; } );
 
-    sceneManager.addSceneDevice( ledstreifenWeiss, { iot::Scene::SCENE1, iot::Scene::SCENE2 } );
-    sceneManager.addSceneDevice( ledstreifenBunt, { iot::Scene::OFF } );
+    sceneManager.addSceneDevice( ledstreifenWeiss, { Scene::SCENE1, Scene::SCENE2 } );
+    sceneManager.addSceneDevice( ledstreifenBunt, { Scene::OFF } );
 
     motionInput.changeEvent += []( bool value ) { motionDevice.set( value ); };
 

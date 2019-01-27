@@ -1,24 +1,19 @@
 #ifndef ESP8266_IOT_WIRECONFIG_HPP
 #define ESP8266_IOT_WIRECONFIG_HPP
 
-namespace iot {
 
-    class IoT;
+class WireConfig
+{
+public:
+    WireConfig( int sda, int scl ) noexcept;
+    WireConfig( WireConfig const& ) = delete;
 
-    class WireConfig
-    {
-    public:
-        WireConfig( IoT& iot, int sda, int scl ) noexcept;
-        WireConfig( WireConfig const& ) = delete;
+private:
+    void begin();
 
-        IoT& iot;
+    int sda_;
+    int scl_;
+};
 
-    private:
-        void begin();
 
-        int sda_;
-        int scl_;
-    };
-
-} // namespace iot
 #endif // ESP8266_IOT_WIRECONFIG_HPP

@@ -5,25 +5,19 @@
 
 #include "Event.hpp"
 
-namespace iot {
+class Input
+{
+public:
+    explicit Input( std::function< bool() > input ) noexcept;
+    Input( Input const& ) = delete;
 
-    class IoT;
+    Event< void( bool ) > changeEvent;
 
-    class Input
-    {
-    public:
-        Input( IoT& iot, std::function< bool() > input ) noexcept;
-        Input( Input const& ) = delete;
+private:
+    void loop();
 
-        Event< void( bool ) > changeEvent;
-
-    private:
-        void loop();
-
-        std::function< bool() > input_;
-        bool value_ {};
-    };
-
-} // namespace iot
+    std::function< bool() > input_;
+    bool value_ {};
+};
 
 #endif // ESP8266_IOT_INPUT_HPP

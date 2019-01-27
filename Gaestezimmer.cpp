@@ -6,22 +6,22 @@
 #include "IoT/PushButton.hpp"
 #include "IoT/Debounce.hpp"
 
-iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Gaestezimmer" );
-iot::WireConfig wireConfig( IoT, 2, 0 );
-iot::AvrI2C avr2ic( wireConfig, 2 );
+IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Gaestezimmer" );
+WireConfig wireConfig( 2, 0 );
+AvrI2C avr2ic( wireConfig, 2 );
 
-iot::PushButton button( IoT, iot::debounce( [] { return avr2ic.read(); } ));
-iot::Device schwarzlicht( IoT, "Gaestezimmer/Schwarzlicht", []( bool value ) { avr2ic.set( 0, value ); } );
-iot::Device deckenlampe( IoT, "Gaestezimmer/Deckenlampe", []( bool value ) { avr2ic.set( 1, value ); } );
+PushButton button( debounce( [] { return avr2ic.read(); } ));
+Device schwarzlicht( "Gaestezimmer/Schwarzlicht", []( bool value ) { avr2ic.set( 0, value ); } );
+Device deckenlampe( "Gaestezimmer/Deckenlampe", []( bool value ) { avr2ic.set( 1, value ); } );
 
-iot::SceneManager sceneManager( IoT, "Gaestezimmer" );
+SceneManager sceneManager( "Gaestezimmer" );
 
 void setup()
 {
     button.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
 
-    sceneManager.addSceneDevice( schwarzlicht, { iot::Scene::SCENE2 } );
-    sceneManager.addSceneDevice( deckenlampe, { iot::Scene::SCENE1 } );
+    sceneManager.addSceneDevice( schwarzlicht, { Scene::SCENE2 } );
+    sceneManager.addSceneDevice( deckenlampe, { Scene::SCENE1 } );
 
     IoT.begin();
 }

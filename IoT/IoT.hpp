@@ -11,53 +11,55 @@
 #include "Event.hpp"
 #include "Timer.hpp"
 
-namespace iot {
 
-    class IoT
-    {
-    public:
-        static constexpr uint32_t tick = 10;
+class IoT
+{
+public:
+    static constexpr uint32_t tick = 10;
 
-        IoT( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort, char const* mqttClientId ) noexcept;
-        IoT( IoT const& ) = delete;
+    static IoT& get() { return *instance; }
 
-        void begin();
-        void loop();
+    IoT( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort, char const* mqttClientId ) noexcept;
+    IoT( IoT const& ) = delete;
 
-        void publish( String topic, String payload );
-        void subscribe( String topic, std::function< void( String message ) > handler );
+    void begin();
+    void loop();
 
-        Event< void() > beginEvent;
-        Event< void() > loopAlwaysEvent;
-        Event< void() > loopTickEvent;
+    void publish( String topic, String payload );
+    void subscribe( String topic, std::function< void( String message ) > handler );
 
-    private:
-        void connectToWiFi();
-        void connectToMqtt();
+    Event< void() > beginEvent;
+    Event< void() > loopAlwaysEvent;
+    Event< void() > loopTickEvent;
 
-        void wiFiConnected();
-        void wiFiDisconnected();
+private:
+    static IoT* instance;
 
-        void mqttConnected();
-        void mqttDisconnected();
-        void mqttMessage( char const* topic, char const* payload, size_t length );
+    void connectToWiFi();
+    void connectToMqtt();
 
-        char const* wiFiSsid_;
-        char const* wiFiPassword_;
-        WiFiEventHandler wiFiConnectHandler_;
-        WiFiEventHandler wiFiDisconnectHandler_;
-        Timer wiFiReconnectTimer_;
+    void wiFiConnected();
+    void wiFiDisconnected();
 
-        char const* mqttIp_;
-        uint16_t mqttPort_;
-        char const* mqttClientId_;
-        Timer mqttReconnectTimer_;
-        AsyncMqttClient mqttClient_;
-        std::map< String, std::function< void( String payload ) > > mqttSubscriptions_;
+    void mqttConnected();
+    void mqttDisconnected();
+    void mqttMessage( char const* topic, char const* payload, size_t length );
 
-        uint32_t timestamp_ {};
-    };
+    char const* wiFiSsid_;
+    char const* wiFiPassword_;
+    WiFiEventHandler wiFiConnectHandler_;
+    WiFiEventHandler wiFiDisconnectHandler_;
+    Timer wiFiReconnectTimer_;
 
-} // namespace iot
+    char const* mqttIp_;
+    uint16_t mqttPort_;
+    char const* mqttClientId_;
+    Timer mqttReconnectTimer_;
+    AsyncMqttClient mqttClient_;
+    std::map< String, std::function< void( String payload ) > > mqttSubscriptions_;
+
+    uint32_t timestamp_ {};
+};
+
 
 #endif // ESP8266_IOT_IOT_HPP
