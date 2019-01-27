@@ -17,8 +17,8 @@ add_library(IoT STATIC
         Input.hpp
         Pcf8574.cpp
         Pcf8574.hpp
-        Wire.cpp
-        Wire.hpp
+        WireConfig.cpp
+        WireConfig.hpp
         AvrI2C.cpp
         AvrI2C.hpp
         Remote.cpp

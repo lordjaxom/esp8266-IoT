@@ -9,7 +9,7 @@
 #include "IoT/Pcf8574.hpp"
 #include "IoT/PushButton.hpp"
 #include "IoT/SceneManager.hpp"
-#include "IoT/Wire.hpp"
+#include "IoT/WireConfig.hpp"
 #include "IoT/String.hpp"
 
 using namespace std;
@@ -43,9 +43,9 @@ static constexpr size_t deviceCount = sizeof( deviceNames ) / sizeof( deviceName
 
 iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Vorratskeller" );
 
-iot::Wire wire( IoT, 2, 0 );
-iot::Pcf8574 pcf8574Output( wire, 56, 0xff );
-iot::Pcf8574 pcf8574Input( wire, 57, 0x00 );
+iot::WireConfig wireConfig( IoT, 2, 0 );
+iot::Pcf8574 pcf8574Output( wireConfig, 56, 0xff );
+iot::Pcf8574 pcf8574Input( wireConfig, 57, 0x00 );
 
 StaticVector< iot::PushButton, deviceCount > buttons;
 StaticVector< iot::Device, deviceCount > outputs;

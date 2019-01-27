@@ -2,11 +2,11 @@
 
 #include "AvrI2C.hpp"
 #include "IoT.hpp"
-#include "Wire.hpp"
+#include "WireConfig.hpp"
 
 namespace iot {
 
-    AvrI2C::AvrI2C( Wire& wire, uint8_t address )
+    AvrI2C::AvrI2C( WireConfig& wire, uint8_t address )
             : address_( address )
     {
         wire.iot.loopTickEvent += [this] { loop(); };

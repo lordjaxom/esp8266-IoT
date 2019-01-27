@@ -12,18 +12,15 @@ static constexpr uint8_t outputPin = 5;
 iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Untitled" );
 
 iot::PushButton button( IoT, iot::debounce( iot::GpioInput( IoT, buttonPin )));
-// iot::Device output( IoT, "Untitled/Output", iot::GpioOutput( IoT, outputPin ));
-iot::Remote output( IoT, "Gaestezimmer/Deckenlampe" );
+iot::Device output( IoT, "Untitled/Output", iot::GpioOutput( IoT, outputPin ));
 
 iot::SceneManager sceneManager( IoT, "Untitled" );
 
 void setup()
 {
-    //button.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
-    button.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output, clicked ); };
+    button.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
 
-    //sceneManager.addSceneDevice( output );
-    sceneManager.addLocalDevice( output, {} );
+    sceneManager.addSceneDevice( output );
 
     IoT.begin();
 }

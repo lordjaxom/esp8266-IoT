@@ -5,12 +5,12 @@
 
 namespace iot {
 
-    class Wire;
+    class WireConfig;
 
     class AvrI2C
     {
     public:
-        explicit AvrI2C( Wire& wire, uint8_t address );
+        explicit AvrI2C( WireConfig& wire, uint8_t address );
 
         AvrI2C( AvrI2C const& ) = delete;
 
