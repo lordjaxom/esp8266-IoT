@@ -41,7 +41,7 @@ static constexpr char const* deviceNames[] = {
 };
 static constexpr size_t deviceCount = sizeof( deviceNames ) / sizeof( deviceNames[0] );
 
-IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Vorratskeller" );
+IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Vorratskeller" );
 
 WireConfig wireConfig( 2, 0 );
 Pcf8574 pcf8574Output( wireConfig, 56, 0xff );

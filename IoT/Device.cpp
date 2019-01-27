@@ -17,7 +17,7 @@ Device::Device( String name, char const* stateName, char const* falseValue, char
           trueValue_( trueValue ),
           action_( move( action ))
 {
-    IoT::get().subscribe( str( "cmnd/", name_, "/", stateName_ ), [this]( String message ) { set( message == trueValue_ ); } );
+    IoT.subscribe( str( "cmnd/", name_, "/", stateName_ ), [this]( String message ) { set( message == trueValue_ ); } );
 }
 
 Device::Device( String name, char const* stateName, char const* falseValue, char const* trueValue ) noexcept
@@ -35,7 +35,7 @@ void Device::set( bool value )
     log( "setting device ", name_, " to ", value ? trueValue_ : falseValue_ );
 
     action_( value );
-    IoT::get().publish( str( "stat/", name_, "/", stateName_ ), value ? trueValue_ : falseValue_ );
+    IoT.publish( str( "stat/", name_, "/", stateName_ ), value ? trueValue_ : falseValue_ );
 
     value_ = value;
 }

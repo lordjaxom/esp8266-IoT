@@ -8,7 +8,7 @@ WireConfig::WireConfig( int sda, int scl ) noexcept
         : sda_( sda ),
           scl_( scl )
 {
-    IoT::get().beginEvent += [this] { this->begin(); };
+    IoT.beginEvent += [this] { this->begin(); };
 }
 
 void WireConfig::begin()

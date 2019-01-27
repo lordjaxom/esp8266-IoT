@@ -9,10 +9,10 @@
 static constexpr uint8_t buttonPin = 0; // 12
 static constexpr uint8_t outputPin = 5;
 
-IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Untitled" );
+IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Untitled" );
 
-PushButton button( debounce( GpioInput( buttonPin )));
-Device output( "Untitled/Output", GpioOutput( outputPin ));
+PushButton button( debounce( gpioInput( buttonPin )));
+Device output( "Untitled/Output", gpioOutput( outputPin ));
 
 SceneManager sceneManager( "Untitled" );
 

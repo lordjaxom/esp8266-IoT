@@ -10,7 +10,7 @@
 class PushButton
 {
 public:
-    PushButton( std::function< bool() > input ) noexcept;
+    explicit PushButton( std::function< bool() > input ) noexcept;
     PushButton( PushButton const& ) = delete;
 
     Event< void( unsigned clicks ) > clickedEvent;

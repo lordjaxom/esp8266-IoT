@@ -5,10 +5,8 @@
 
 using namespace std;
 
-
-IoT* IoT::instance;
-
-IoT::IoT( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort, char const* mqttClientId ) noexcept
+IoTClass::IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort,
+                    char const* mqttClientId ) noexcept
         : wiFiSsid_( wiFiSsid ),
           wiFiPassword_( wiFiPassword ),
           wiFiReconnectTimer_( [this] { connectToWiFi(); } ),
@@ -19,10 +17,8 @@ IoT::IoT( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, ui
 {
 }
 
-void IoT::begin()
+void IoTClass::begin()
 {
-    instance = this;
-
 #if defined( LOGGER_SERIAL )
     Serial.begin( 115200 );
     while ( !Serial ) {}
@@ -47,7 +43,7 @@ void IoT::begin()
     beginEvent();
 }
 
-void IoT::loop()
+void IoTClass::loop()
 {
     loopAlwaysEvent();
 
@@ -59,19 +55,19 @@ void IoT::loop()
     }
 }
 
-void IoT::publish( String topic, String payload )
+void IoTClass::publish( String topic, String payload )
 {
     log( "publishing ", payload, " to ", topic );
 
     mqttClient_.publish( topic.c_str(), 1, false, payload.c_str());
 }
 
-void IoT::subscribe( String topic, std::function< void( String message ) > handler )
+void IoTClass::subscribe( String topic, std::function< void( String message ) > handler )
 {
     mqttSubscriptions_.emplace( move( topic ), move( handler ));
 }
 
-void IoT::connectToWiFi()
+void IoTClass::connectToWiFi()
 {
     log( "connecting to WiFi at ", wiFiSsid_ );
 
@@ -79,21 +75,21 @@ void IoT::connectToWiFi()
     WiFi.begin( wiFiSsid_, wiFiPassword_ );
 }
 
-void IoT::connectToMqtt()
+void IoTClass::connectToMqtt()
 {
     log( "connecting to MQTT broker at ", mqttIp_, " as ", mqttClientId_ );
 
     mqttClient_.connect();
 }
 
-void IoT::wiFiConnected()
+void IoTClass::wiFiConnected()
 {
     log( "connection to WiFi established as ", WiFi.localIP());
 
     connectToMqtt();
 }
 
-void IoT::wiFiDisconnected()
+void IoTClass::wiFiDisconnected()
 {
     log( "connection to WiFi lost" );
 
@@ -101,7 +97,7 @@ void IoT::wiFiDisconnected()
     wiFiReconnectTimer_.start( 1000 );
 }
 
-void IoT::mqttConnected()
+void IoTClass::mqttConnected()
 {
     log( "connection to MQTT broker established" );
 
@@ -112,7 +108,7 @@ void IoT::mqttConnected()
     }
 }
 
-void IoT::mqttDisconnected()
+void IoTClass::mqttDisconnected()
 {
     log( "connection to MQTT broker lost" );
 
@@ -121,7 +117,7 @@ void IoT::mqttDisconnected()
     }
 }
 
-void IoT::mqttMessage( char const* topic, char const* payload, size_t length )
+void IoTClass::mqttMessage( char const* topic, char const* payload, size_t length )
 {
     String message;
     message.reserve( length );
@@ -131,4 +127,3 @@ void IoT::mqttMessage( char const* topic, char const* payload, size_t length )
 
     mqttSubscriptions_.find( topic )->second( move( message ));
 }
-

@@ -47,8 +47,8 @@ vector< Scene > offScenes( vector< Scene > const& onScenes, vector< Scene > cons
 SceneManager::SceneManager( char const* zone )
         : zone_( zone )
 {
-    IoT::get().loopTickEvent += [this] { loop(); };
-    IoT::get().subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { changeScene( message ); } );
+    IoT.loopTickEvent += [this] { loop(); };
+    IoT.subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { changeScene( message ); } );
 }
 
 void SceneManager::loop()
@@ -97,8 +97,8 @@ void SceneManager::changeScene( Scene scene, bool publish )
 
     sceneEvents_[scene]();
     if ( publish ) {
-        IoT::get().publish( str( "cmnd/", zone_, "/LIGHTSCENE" ), toString( scene ));
-        publishedScenes_.emplace( scene, 1000 / IoT::tick );
+        IoT.publish( str( "cmnd/", zone_, "/LIGHTSCENE" ), toString( scene ));
+        publishedScenes_.emplace( scene, 1000 / IoTClass::tick );
     }
 
     scene_ = scene;

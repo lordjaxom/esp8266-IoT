@@ -6,7 +6,7 @@
 #include "IoT/PushButton.hpp"
 #include "IoT/Debounce.hpp"
 
-IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Gaestezimmer" );
+IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Gaestezimmer" );
 WireConfig wireConfig( 2, 0 );
 AvrI2C avr2ic( wireConfig, 2 );
 

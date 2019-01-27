@@ -17,7 +17,7 @@ unsigned neoPixelState;
 auto onAnimation = fillAnimation( neoPixelBuffer, 0xffffff );
 auto buntAnimation = warpAnimation< 10, 40, 20, 25, 100, 25 >( neoPixelBuffer );
 
-IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "SchmalerFlur/Garderobe" );
+IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "SchmalerFlur/Garderobe" );
 
 Device ledstreifenWeiss( "SchmalerFlur/GarderobeWeiss" );
 Device ledstreifenBunt( "SchmalerFlur/GarderobeBunt" );

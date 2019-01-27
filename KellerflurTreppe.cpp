@@ -5,7 +5,7 @@
 #include "IoT/PushButton.hpp"
 #include "IoT/SceneManager.hpp"
 
-IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Kellerflur/Treppe" );
+IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Kellerflur/Treppe" );
 
 PushButton button( debounce( [] { return digitalRead( 0 ) == LOW; } ));
 Device output( "Kellerflur/Treppe", []( bool value ) { digitalWrite( 2, static_cast< uint8_t >( value ? LOW : HIGH )); } );

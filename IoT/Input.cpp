@@ -5,11 +5,10 @@
 
 using namespace std;
 
-
 Input::Input( function< bool() > input ) noexcept
         : input_( move( input ))
 {
-    IoT::get().loopTickEvent += [this] { this->loop(); };
+    IoT.loopTickEvent += [this] { this->loop(); };
 }
 
 void Input::loop()

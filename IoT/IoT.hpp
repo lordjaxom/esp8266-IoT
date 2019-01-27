@@ -11,16 +11,13 @@
 #include "Event.hpp"
 #include "Timer.hpp"
 
-
-class IoT
+class IoTClass
 {
 public:
     static constexpr uint32_t tick = 10;
 
-    static IoT& get() { return *instance; }
-
-    IoT( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort, char const* mqttClientId ) noexcept;
-    IoT( IoT const& ) = delete;
+    IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort, char const* mqttClientId ) noexcept;
+    IoTClass( IoTClass const& ) = delete;
 
     void begin();
     void loop();
@@ -33,8 +30,6 @@ public:
     Event< void() > loopTickEvent;
 
 private:
-    static IoT* instance;
-
     void connectToWiFi();
     void connectToMqtt();
 
@@ -61,5 +56,6 @@ private:
     uint32_t timestamp_ {};
 };
 
+extern IoTClass IoT;
 
 #endif // ESP8266_IOT_IOT_HPP
