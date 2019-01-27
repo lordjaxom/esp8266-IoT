@@ -20,4 +20,8 @@ add_library(IoT STATIC
         Wire.cpp
         Wire.hpp
         AvrI2C.cpp
-        AvrI2C.hpp)
+        AvrI2C.hpp
+        Remote.cpp
+        Remote.hpp
+        Gpio.cpp
+        Gpio.hpp)

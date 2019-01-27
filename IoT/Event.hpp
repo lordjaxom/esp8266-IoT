@@ -10,18 +10,19 @@ namespace iot {
     class Event;
 
     template< typename ...Args >
-    class Event< void ( Args... ) > final
+    class Event< void( Args... ) > final
     {
     public:
-        using Signature = void ( Args... );
+        using Signature = void( Args... );
         using Handler = std::function< Signature >;
 
         Event() noexcept {}
+
         Event( Event const& ) = delete;
 
         Event& operator+=( Handler handler )
         {
-            handlers_.push_back( std::move( handler ) );
+            handlers_.push_back( std::move( handler ));
             return *this;
         }
 

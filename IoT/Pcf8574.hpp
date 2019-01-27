@@ -6,6 +6,7 @@
 namespace iot {
 
     class IoT;
+
     class Wire;
 
     class Pcf8574
@@ -14,9 +15,9 @@ namespace iot {
         Pcf8574( Wire& wire, uint8_t address, uint8_t outputMask ) noexcept;
         Pcf8574( Pcf8574 const& ) = delete;
 
-        bool get( uint8_t index ) const { return output_ & ( 1 << index ) > 0; }
         bool read( uint8_t index ) const { return input_ & ( 1 << index ) > 0; }
 
+        bool get( uint8_t index ) const { return output_ & ( 1 << index ) > 0; }
         void set( uint8_t index, bool value );
 
         IoT& iot;

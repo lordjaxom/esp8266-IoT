@@ -11,8 +11,8 @@
 #include "ledgraph/ledbuffer.hpp"
 #include "ledgraph/warp_animation.hpp"
 
-NeoPixelBus< NeoGrbFeature, NeoEsp8266AsyncUart800KbpsMethod > neoPixelBus( 134 );
-NeoPixelBuffer< NeoGrbFeature, NeoEsp8266AsyncUart800KbpsMethod > neoPixelBuffer( neoPixelBus );
+NeoPixelBus< NeoGrbFeature, NeoEsp8266AsyncUart0800KbpsMethod > neoPixelBus( 134 );
+NeoPixelBuffer< NeoGrbFeature, NeoEsp8266AsyncUart0800KbpsMethod > neoPixelBuffer( neoPixelBus );
 unsigned neoPixelState;
 auto onAnimation = fillAnimation( neoPixelBuffer, 0xffffff );
 auto buntAnimation = warpAnimation< 10, 40, 20, 25, 100, 25 >( neoPixelBuffer );

@@ -1,4 +1,6 @@
 #include <array>
+#include <memory>
+#include <type_traits>
 #include <vector>
 
 #include "IoT/Debounce.hpp"
@@ -12,19 +14,32 @@
 
 using namespace std;
 
-char const* deviceName( uint8_t index )
+template< typename T, size_t N >
+class StaticVector
 {
-    switch ( index ) {
-        case 0: return "Vitrinen";
-        case 1: return "Tuer";
-        case 2: return "Haengeschraenke";
-        case 3: return "Anrichte";
-        case 4: return "Deckenlampe";
-        case 5: return "Fensterbank";
-        case 6: return "Theke";
+public:
+    template< typename ...Args >
+    T& emplace( Args&&... args )
+    {
+        auto& data = data_[size_++];
+        new(&data) T( std::forward< Args >( args )... );
     }
-    return "";
-}
+
+private:
+    typename std::aligned_storage< sizeof( T ), alignof( T ) >::type data_[N];
+    size_t size_ {};
+};
+
+static constexpr char const* deviceNames[] = {
+        "Vitrinen",
+        "Tuer",
+        "Haengeschraenke",
+        "Anrichte",
+        "Deckenlampe",
+        "Fensterbank",
+        "Theke"
+};
+static constexpr size_t deviceCount = sizeof( deviceNames ) / sizeof( deviceNames[0] );
 
 iot::IoT IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Vorratskeller" );
 
@@ -32,19 +47,20 @@ iot::Wire wire( IoT, 2, 0 );
 iot::Pcf8574 pcf8574Output( wire, 56, 0xff );
 iot::Pcf8574 pcf8574Input( wire, 57, 0x00 );
 
-array< String, 7 > topicDeviceNames;
-vector< iot::PushButton > buttons;
-vector< iot::Device > outputs;
+StaticVector< iot::PushButton, deviceCount > buttons;
+StaticVector< iot::Device, deviceCount > outputs;
 
 iot::SceneManager sceneManager( IoT, "Kueche" );
 
 void setup()
 {
     for ( uint8_t i = 0; i < 7; ++i ) {
-//        topicDeviceNames[i] = iot::str( "Kueche/", deviceName( i ));
-//        buttons.emplace_back( IoT, iot::debounce( [i] { return !pcf8574Input.read( i ); } ));
-//        outputs.emplace_back( IoT, topicDeviceNames[i].c_str(), [i]( bool value ) { pcf8574Output.set( i, value ); } );
+        auto& button = buttons.emplace( IoT, iot::debounce( [i] { return !pcf8574Input.read( i ); } ));
+        auto& output = outputs.emplace( IoT, iot::str( "Kueche/", deviceNames[i] ), [i]( bool value ) { pcf8574Output.set( i, value ); } );
 
+        sceneManager.addLocalDevice( output );
+
+        button.clickedEvent += [&output]( unsigned clicked ) { sceneManager.deviceButtonClicked( output, clicked ); };
     }
 
     IoT.begin();

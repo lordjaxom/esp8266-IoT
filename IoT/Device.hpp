@@ -10,21 +10,28 @@ namespace iot {
     class Device
     {
     public:
-        Device( IoT& iot, char const* name, char const* stateName, char const* falseValue, char const* trueValue,
+        Device( IoT& iot, String name, char const* stateName, char const* falseValue, char const* trueValue,
                 std::function< void( bool value ) > action ) noexcept;
-        Device( IoT& iot, char const* name, char const* stateName, char const* falseValue = "OFF", char const* trueValue = "ON" ) noexcept;
-        Device( IoT& iot, char const* name, std::function< void( bool value ) > action = []( bool ) {} ) noexcept;
+        Device( IoT& iot, String name, char const* stateName, char const* falseValue = "OFF", char const* trueValue = "ON" ) noexcept;
+        Device( IoT& iot, String name, std::function< void( bool value ) > action = []( bool ) {} ) noexcept;
         Device( Device const& ) = delete;
+
+        String const& name() const { return name_; }
+
+        bool get() const { return value_; }
 
         void set( bool value );
 
+        void toggle() { set( !value_ ); }
+
     private:
         IoT& iot_;
-        char const* name_;
+        String name_;
         char const* stateName_;
         char const* falseValue_;
         char const* trueValue_;
         std::function< void( bool value ) > action_;
+        bool value_ {};
     };
 
 } // namespace iot

@@ -29,7 +29,7 @@ namespace iot {
         }
 
         if ( ::Wire.requestFrom( address_, static_cast< uint8_t >( 1 ))) {
-            input_ = static_cast< uint8_t >( ::Wire.read());
+            input_ = static_cast< uint8_t >( ~::Wire.read());
         }
     }
 

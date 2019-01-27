@@ -5,16 +5,20 @@
 
 namespace iot {
 
-    template< typename T >
+    template< typename Input >
     class Debounce
     {
-    public:
-        explicit Debounce( std::function< T() > input )
-                : input_( std::move( input )) {}
+        using Type = decltype( std::declval< Input >()());
 
-        T operator()()
+    public:
+        explicit Debounce( Input&& input ) noexcept
+                : input_( std::move( input ))
         {
-            T temp = value_ ^input_();
+        }
+
+        Type operator()()
+        {
+            Type temp = value_ ^input_();
             states_[0] = ~( states_[0] & temp );
             states_[1] = states_[0] ^ ( states_[1] & temp );
             temp &= states_[0] & states_[1];
@@ -23,15 +27,15 @@ namespace iot {
         }
 
     private:
-        std::function< T() > input_;
-        T value_ {};
-        T states_[2] {};
+        Input input_;
+        Type value_ {};
+        Type states_[2] {};
     };
 
     template< typename Input >
-    Debounce< decltype( std::declval< Input >()()) > debounce( Input&& input )
+    Debounce< Input > debounce( Input&& input )
     {
-        return Debounce< decltype( std::declval< Input >()()) >( std::forward< Input >( input ));
+        return Debounce< Input >( std::forward< Input >( input ));
     }
 
 } // namespace iot

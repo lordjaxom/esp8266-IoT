@@ -49,9 +49,9 @@ namespace iot {
         loopAlwaysEvent();
 
         uint32_t timestamp = millis();
-        uint32_t elapsed = timestamp - lastLoop_;
+        uint32_t elapsed = timestamp - timestamp_;
         if ( elapsed > tick ) {
-            lastLoop_ = timestamp;
+            timestamp_ = timestamp;
             loopTickEvent();
         }
     }

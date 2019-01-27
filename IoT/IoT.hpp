@@ -53,9 +53,9 @@ namespace iot {
         char const* mqttClientId_;
         Timer mqttReconnectTimer_;
         AsyncMqttClient mqttClient_;
-        std::map< String, std::function< void ( String payload ) > > mqttSubscriptions_;
+        std::map< String, std::function< void( String payload ) > > mqttSubscriptions_;
 
-        uint32_t lastLoop_ {};
+        uint32_t timestamp_ {};
     };
 
 } // namespace iot

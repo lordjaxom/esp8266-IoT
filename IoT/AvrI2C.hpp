@@ -14,7 +14,11 @@ namespace iot {
 
         AvrI2C( AvrI2C const& ) = delete;
 
-        void set( size_t index, bool value ) { outputs_[index] = value; dirty_[index] = true; }
+        void set( size_t index, bool value )
+        {
+            outputs_[index] = value;
+            dirty_[index] = true;
+        }
 
         bool read() const { return input_; }
 

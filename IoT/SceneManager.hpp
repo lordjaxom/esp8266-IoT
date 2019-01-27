@@ -1,11 +1,11 @@
 #ifndef ESP8266_IOT_SCENEMANAGER_HPP
 #define ESP8266_IOT_SCENEMANAGER_HPP
 
-#include <algorithm>
 #include <map>
 #include <vector>
 
 #include "Event.hpp"
+#include "String.hpp"
 
 namespace iot {
 
@@ -26,12 +26,20 @@ namespace iot {
 
     class SceneManager
     {
-
     public:
         SceneManager( IoT& iot, char const* zone ) noexcept;
         SceneManager( SceneManager const& ) = delete;
 
         void addSceneEvent( Scene scene, std::function< void() > handler );
+
+        template< typename Device >
+        void addLocalDevice( Device& device, std::vector< Scene > const& sleepScenes = { Scene::SLEEP } )
+        {
+            devices_.emplace( device.name(), [&device] { device.toggle(); } );
+            for ( auto scene : sleepScenes ) {
+                sceneEvents_[scene] += [&device] { device.set( false ); };
+            }
+        }
 
         template< typename Device >
         void addSceneDevice( Device& device, std::vector< Scene > const& onScenes = { Scene::SCENE1 },
@@ -43,23 +51,33 @@ namespace iot {
             for ( auto scene : offScenes( onScenes, ignoredScenes )) {
                 sceneEvents_[scene] += [&device] { device.set( false ); };
             }
+            addLocalDevice( device );
         }
 
         void sceneButtonClicked( unsigned clicked );
 
-        void addRemoteDevice( String name );
-
-        void remoteDeviceButtonClicked( String const& name, unsigned clicked );
+        template< typename Device >
+        void deviceButtonClicked( Device& device, unsigned clicked )
+        {
+            if ( clicked == 1 ) {
+                devices_.find( device.name())->second();
+            } else {
+                sceneButtonClicked( clicked );
+            }
+        }
 
     private:
+        void loop();
+
         void changeScene( String const& sceneName );
         void changeScene( Scene scene, bool publish = true );
 
         IoT& iot_;
         char const* zone_;
         Scene scene_ {};
-        std::map< Scene, Event < void() > > sceneEvents_;
-        std::map< String, bool > remoteDevices_;
+        std::map< Scene, Event< void() > > sceneEvents_;
+        std::map< StringView, std::function< void() > > devices_;
+        std::multimap< Scene, uint32_t > publishedScenes_;
     };
 
 } // namespace iot

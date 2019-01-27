@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <utility>
 
 #include "IoT.hpp"
@@ -48,7 +49,19 @@ namespace iot {
             : iot_( iot ),
               zone_( zone )
     {
+        iot_.loopTickEvent += [this] { loop(); };
         iot_.subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { changeScene( message ); } );
+    }
+
+    void SceneManager::loop()
+    {
+        for ( auto it = publishedScenes_.begin(); it != publishedScenes_.end(); ) {
+            if ( --it->second == 0 ) {
+                it = publishedScenes_.erase( it );
+            } else {
+                ++it;
+            }
+        }
     }
 
     void SceneManager::addSceneEvent( Scene scene, function< void() > handler )
@@ -67,28 +80,16 @@ namespace iot {
         }
     }
 
-    void SceneManager::addRemoteDevice( String name )
-    {
-        auto it = remoteDevices_.emplace( move( name ), false );
-
-        iot_.subscribe( str( "stat/", zone_, "/", it.first->first.c_str(), "/POWER" ),
-                        [this, &name = it.first->first]( String message ) { remoteDevices_.find( name )->second = message == "ON"; } );
-    }
-
-    void SceneManager::remoteDeviceButtonClicked( String const& name, unsigned clicked )
-    {
-        if ( clicked == 1 ) {
-            iot_.publish( str( "cmnd/", zone_, "/", name.c_str(), "/POWER" ), remoteDevices_.find( name )->second ? "OFF" : "ON" );
-        } else {
-            sceneButtonClicked( clicked );
-        }
-    }
-
     void SceneManager::changeScene( String const& sceneName )
     {
         Scene scene = toScene( sceneName );
         if ( scene != Scene::UNKNOWN ) {
-            changeScene( scene, false );
+            auto it = publishedScenes_.find( scene );
+            if ( it == publishedScenes_.end()) {
+                changeScene( scene, false );
+            } else {
+                publishedScenes_.erase( it );
+            }
         }
     }
 
@@ -99,6 +100,7 @@ namespace iot {
         sceneEvents_[scene]();
         if ( publish ) {
             iot_.publish( str( "cmnd/", zone_, "/LIGHTSCENE" ), toString( scene ));
+            publishedScenes_.emplace( scene, 1000 / IoT::tick );
         }
 
         scene_ = scene;
