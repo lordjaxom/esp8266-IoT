@@ -35,5 +35,4 @@ private:
     bool invert_;
 };
 
-
 #endif // ESP8266_IOT_GPIO_HPP

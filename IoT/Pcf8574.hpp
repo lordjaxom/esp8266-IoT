@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-
 class WireConfig;
 
 class Pcf8574
@@ -27,6 +26,5 @@ private:
     bool dirty_ { true };
     uint8_t input_ {};
 };
-
 
 #endif // ESP8266_IOT_PCF8574_HPP

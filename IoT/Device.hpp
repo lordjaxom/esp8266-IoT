@@ -3,7 +3,6 @@
 
 #include <functional>
 
-
 class Device
 {
 public:
@@ -29,6 +28,5 @@ private:
     std::function< void( bool value ) > action_;
     bool value_ {};
 };
-
 
 #endif // ESP8266_IOT_DEVICE_HPP

@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-
 class WireConfig;
 
 class AvrI2C
@@ -29,6 +28,5 @@ private:
     bool dirty_[2] { true, true };
     bool input_ {};
 };
-
 
 #endif // ESP8266_IOT_AVRI2C_HPP

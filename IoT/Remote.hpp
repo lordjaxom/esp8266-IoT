@@ -1,7 +1,6 @@
 #ifndef ESP8266_IOT_REMOTE_HPP
 #define ESP8266_IOT_REMOTE_HPP
 
-
 class Remote
 {
 public:
@@ -19,6 +18,5 @@ private:
     String name_;
     bool value_ {};
 };
-
 
 #endif // ESP8266_IOT_REMOTE_HPP

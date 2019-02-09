@@ -1,7 +1,6 @@
 #ifndef ESP8266_IOT_WIRECONFIG_HPP
 #define ESP8266_IOT_WIRECONFIG_HPP
 
-
 class WireConfig
 {
 public:
@@ -14,6 +13,5 @@ private:
     int sda_;
     int scl_;
 };
-
 
 #endif // ESP8266_IOT_WIRECONFIG_HPP

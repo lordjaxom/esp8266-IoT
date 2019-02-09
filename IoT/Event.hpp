@@ -4,7 +4,6 @@
 #include <functional>
 #include <vector>
 
-
 template< typename Signature >
 class Event;
 
@@ -36,6 +35,5 @@ public:
 private:
     std::vector< Handler > handlers_;
 };
-
 
 #endif // ESP8266_IOT_EVENT_HPP

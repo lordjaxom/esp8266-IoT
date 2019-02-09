@@ -6,7 +6,6 @@
 
 using namespace std;
 
-
 PushButton::PushButton( function< bool() > input ) noexcept
         : input_( move( input )),
           timer_( [this] { expired(); } )
@@ -43,4 +42,3 @@ void PushButton::expired()
     }
     clicks_ = 0;
 }
-

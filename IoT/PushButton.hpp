@@ -6,7 +6,6 @@
 #include "Event.hpp"
 #include "Timer.hpp"
 
-
 class PushButton
 {
 public:
@@ -25,6 +24,5 @@ private:
     unsigned clicks_ {};
     bool finished_ {};
 };
-
 
 #endif // ESP8266_IOT_PUSHBUTTON_HPP

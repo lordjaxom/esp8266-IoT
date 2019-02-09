@@ -3,7 +3,6 @@
 
 #include <functional>
 
-
 class Timer
 {
 public:
@@ -21,6 +20,5 @@ private:
     std::function< void() > handler_;
     uint32_t timeout_ {};
 };
-
 
 #endif //ESP8266_IOT_TIMER_HPP

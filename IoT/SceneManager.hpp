@@ -7,7 +7,6 @@
 #include "Event.hpp"
 #include "String.hpp"
 
-
 enum class Scene : uint8_t
 {
     OFF,
@@ -76,6 +75,5 @@ private:
     std::map< StringView, std::function< void() > > devices_;
     std::multimap< Scene, uint32_t > publishedScenes_;
 };
-
 
 #endif // ESP8266_IOT_SCENEMANAGER_HPP

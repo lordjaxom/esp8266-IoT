@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-
 template< typename Input >
 class Debounce
 {
@@ -36,6 +35,5 @@ Debounce< Input > debounce( Input&& input )
 {
     return Debounce< Input >( std::forward< Input >( input ));
 }
-
 
 #endif // ESP8266_IOT_DEBOUNCE_HPP
