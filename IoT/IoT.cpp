@@ -21,10 +21,7 @@ IoTClass::IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* 
 
 void IoTClass::begin()
 {
-#if defined( LOGGER_SERIAL )
-    Serial.begin( 115200 );
-    while ( !Serial ) {}
-#endif
+    Logger.begin();
 
     delay( 1000 );
 

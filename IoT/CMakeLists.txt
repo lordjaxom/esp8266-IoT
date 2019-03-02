@@ -2,6 +2,7 @@ add_library(IoT STATIC
         Debounce.hpp
         IoT.cpp
         IoT.hpp
+        Logger.cpp
         Logger.hpp
         PushButton.cpp
         PushButton.hpp
