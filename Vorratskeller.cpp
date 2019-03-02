@@ -7,7 +7,7 @@
 #include "IoT/PushButton.hpp"
 #include "IoT/SceneManager.hpp"
 
-IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "Vorratskeller" );
+IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
 PushButton button1( debounce( gpioInput( 14 )));
 Device output1( "Vorratskeller/Deckenlampe", gpioOutput( 4 ));

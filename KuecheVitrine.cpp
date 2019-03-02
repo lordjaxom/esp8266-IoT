@@ -5,7 +5,7 @@
 #include "IoT/SceneManager.hpp"
 #include "IoT/String.hpp"
 
-IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "KuecheVitrine" );
+IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
 PushButton button( debounce( [] { return digitalRead( 0 ) == LOW; } ));
 Remote output( "Kueche/Vitrinen" );

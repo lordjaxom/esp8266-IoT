@@ -6,7 +6,7 @@
 #include "IoT/PushButton.hpp"
 #include "IoT/SceneManager.hpp"
 
-IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883, "ColinWZ" );
+IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
 PushButton button( debounce( gpioInput( 12 )));
 Device output( "ColinWZ/DeckenLED", gpioOutput( 5 ));

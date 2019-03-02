@@ -2,19 +2,21 @@
 
 #include "IoT.hpp"
 #include "Logger.hpp"
+#include "String.hpp"
 
 using namespace std;
 
-IoTClass::IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort,
-                    char const* mqttClientId ) noexcept
-        : wiFiSsid_( wiFiSsid ),
+IoTClass::IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort ) noexcept
+        : watchdogTimer_( [this] { ESP.restart(); } ),
+          webServer_( 80 ),
+          wiFiSsid_( wiFiSsid ),
           wiFiPassword_( wiFiPassword ),
           wiFiReconnectTimer_( [this] { connectToWiFi(); } ),
           mqttIp_( mqttIp ),
           mqttPort_( mqttPort ),
-          mqttClientId_( mqttClientId ),
           mqttReconnectTimer_( [this] { connectToMqtt(); } )
 {
+
 }
 
 void IoTClass::begin()
@@ -28,6 +30,8 @@ void IoTClass::begin()
 
     log( "starting ESP-IoT based application" );
 
+    watchdogTimer_.start( watchdogDelay );
+
     wiFiConnectHandler_ = WiFi.onStationModeGotIP( [this]( WiFiEventStationModeGotIP const& ) { wiFiConnected(); } );
     wiFiDisconnectHandler_ = WiFi.onStationModeDisconnected(
             [this]( WiFiEventStationModeDisconnected const& ) { wiFiDisconnected(); } );
@@ -37,14 +41,19 @@ void IoTClass::begin()
     mqttClient_.onDisconnect( [this]( AsyncMqttClientDisconnectReason ) { mqttDisconnected(); } );
     mqttClient_.onMessage( [this]( char const* topic, char const* payload, AsyncMqttClientMessageProperties, size_t length,
                                    size_t, size_t ) { mqttMessage( topic, payload, length ); } );
-    mqttClient_.setClientId( mqttClientId_ );
+    mqttClient_.setClientId( clientId );
     mqttClient_.setServer( mqttIp_, mqttPort_ );
+
+    updateServer_.setup( &webServer_, "/update", "admin", "admin" );
+    webServer_.begin();
 
     beginEvent();
 }
 
 void IoTClass::loop()
 {
+    webServer_.handleClient();
+
     loopAlwaysEvent();
 
     uint32_t timestamp = millis();
@@ -69,15 +78,18 @@ void IoTClass::subscribe( String topic, std::function< void( String message ) > 
 
 void IoTClass::connectToWiFi()
 {
-    log( "connecting to WiFi at ", wiFiSsid_ );
+    String hostname = str( "IoT-", clientId );
+
+    log( "connecting to WiFi at ", wiFiSsid_, " as ", hostname );
 
     WiFi.mode( WIFI_STA );
+    WiFi.hostname( hostname );
     WiFi.begin( wiFiSsid_, wiFiPassword_ );
 }
 
 void IoTClass::connectToMqtt()
 {
-    log( "connecting to MQTT broker at ", mqttIp_, " as ", mqttClientId_ );
+    log( "connecting to MQTT broker at ", mqttIp_, " as ", clientId );
 
     mqttClient_.connect();
 }
@@ -94,12 +106,18 @@ void IoTClass::wiFiDisconnected()
     log( "connection to WiFi lost" );
 
     mqttReconnectTimer_.stop();
-    wiFiReconnectTimer_.start( 1000 );
+    wiFiReconnectTimer_.start( reconnectDelay );
+
+    if ( !watchdogTimer_.active() ) {
+        watchdogTimer_.start( watchdogDelay );
+    }
 }
 
 void IoTClass::mqttConnected()
 {
     log( "connection to MQTT broker established" );
+
+    watchdogTimer_.stop();
 
     for ( auto const& subscription : mqttSubscriptions_ ) {
         log( "subscribing to ", subscription.first );
@@ -113,7 +131,11 @@ void IoTClass::mqttDisconnected()
     log( "connection to MQTT broker lost" );
 
     if ( WiFi.isConnected()) {
-        mqttReconnectTimer_.start( 1000 );
+        mqttReconnectTimer_.start( reconnectDelay );
+    }
+
+    if ( !watchdogTimer_.active() ) {
+        watchdogTimer_.start( watchdogDelay );
     }
 }
 
