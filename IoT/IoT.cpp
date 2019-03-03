@@ -16,7 +16,6 @@ IoTClass::IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* 
           mqttPort_( mqttPort ),
           mqttReconnectTimer_( [this] { connectToMqtt(); } )
 {
-
 }
 
 void IoTClass::begin()
@@ -95,12 +94,15 @@ void IoTClass::wiFiConnected()
 {
     log( "connection to WiFi established as ", WiFi.localIP());
 
+    wiFiConnectedEvent();
     connectToMqtt();
 }
 
 void IoTClass::wiFiDisconnected()
 {
     log( "connection to WiFi lost" );
+
+    wiFiDisconnectedEvent();
 
     mqttReconnectTimer_.stop();
     wiFiReconnectTimer_.start( reconnectDelay );

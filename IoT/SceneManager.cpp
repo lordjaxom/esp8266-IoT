@@ -8,7 +8,6 @@
 
 using namespace std;
 
-
 static char const* toString( Scene scene )
 {
     switch ( scene ) {
