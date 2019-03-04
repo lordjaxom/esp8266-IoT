@@ -14,6 +14,8 @@ link_libraries(${ArduinoEsp8266_LIBRARIES})
 
 if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
     add_definitions(-DLOGGER_SERIAL)
+elseif(${CMAKE_BUILD_TYPE} STREQUAL Testing)
+    add_definitions(-DLOGGER_SOCKET)
 endif()
 
 add_subdirectory(IoT)
@@ -31,7 +33,7 @@ function(add_iot_executable name)
 endfunction()
 
 add_iot_executable(KellerflurTreppe FLASH 512k KellerflurTreppe.cpp)
-add_iot_executable(ColinWoZi FLASH 4M ColinWoZi.cpp)
+add_iot_executable(ColinWZ FLASH 4M ColinWZ.cpp)
 add_iot_executable(Vorratskeller FLASH 4M Vorratskeller.cpp)
 add_iot_executable(Kueche FLASH 512k Kueche.cpp)
 add_iot_executable(KellerflurWerkstatt FLASH 512k KellerflurWerstatt.cpp)

@@ -15,7 +15,7 @@
 
 class IoTClass
 {
-    static constexpr uint32_t watchdogDelay = 10000;
+    static constexpr uint32_t watchdogDelay = 60000;
     static constexpr uint32_t reconnectDelay = 1000;
 
     static char const *clientId;
@@ -29,7 +29,7 @@ public:
     void begin();
     void loop();
 
-    void publish( String topic, String payload );
+    void publish( String const& topic, String const& payload, bool retain = false );
     void subscribe( String topic, std::function< void( String message ) > handler );
 
     Event< void() > wiFiConnectedEvent;
@@ -49,10 +49,8 @@ private:
     void mqttDisconnected();
     void mqttMessage( char const* topic, char const* payload, size_t length );
 
+    String hostname_; // must stay constant?
     Timer watchdogTimer_;
-
-    ESP8266WebServer webServer_;
-    ESP8266HTTPUpdateServer updateServer_;
 
     char const* wiFiSsid_;
     char const* wiFiPassword_;
@@ -62,9 +60,13 @@ private:
 
     char const* mqttIp_;
     uint16_t mqttPort_;
+    String mqttWillTopic_; // must stay constant since mqtt client does not copy will
     Timer mqttReconnectTimer_;
     AsyncMqttClient mqttClient_;
     std::map< String, std::function< void( String payload ) > > mqttSubscriptions_;
+
+    ESP8266WebServer webServer_;
+    ESP8266HTTPUpdateServer updateServer_;
 
     uint32_t timestamp_ {};
 };
