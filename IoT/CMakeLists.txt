@@ -4,6 +4,10 @@ add_library(IoT STATIC
         IoT.hpp
         Logger.cpp
         Logger.hpp
+        LoggerBase.hpp
+        LoggerNoop.hpp
+        LoggerPrint.hpp
+        LoggerSerial.hpp
         PushButton.cpp
         PushButton.hpp
         Timer.cpp

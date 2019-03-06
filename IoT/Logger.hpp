@@ -11,61 +11,46 @@
 
 namespace detail {
 
-    inline String timestamp()
-    {
-        auto timestamp = millis();
-        auto ms = timestamp % 1000;
-        timestamp /= 1000;
-        auto s = timestamp % 60;
-        timestamp /= 60;
-        auto m = timestamp % 60;
-        timestamp /= 60;
-        auto h = timestamp % 100;
+//    inline String timestamp()
+//    {
+//        auto timestamp = millis();
+//        auto ms = timestamp % 1000;
+//        timestamp /= 1000;
+//        auto s = timestamp % 60;
+//        timestamp /= 60;
+//        auto m = timestamp % 60;
+//        timestamp /= 60;
+//        auto h = timestamp % 100;
+//
+//        char buffer[16];
+//        sprintf( buffer, "%02lu:%02lu:%02lu.%03lu ", h, m, s, ms );
+//        return buffer;
+//    }
 
-        char buffer[16];
-        sprintf( buffer, "%02lu:%02lu:%02lu.%03lu ", h, m, s, ms );
-        return buffer;
-    }
+    class Timestamp
+    {
+    public:
+        Timestamp()
+                : timestamp( millis()),
+                  ms( timestamp % 1000 ),
+                  s( ( timestamp /= 1000, timestamp % 60 )),
+                  m( ( timestamp /= 60, timestamp % 60 )),
+                  h( ( timestamp /= 60, timestamp % 100 ))
+        {
+        }
+
+    private:
+        unsigned long timestamp;
+
+    public:
+        unsigned long ms;
+        unsigned long s;
+        unsigned long m;
+        unsigned long h;
+    };
 
 } // namespace detail
-
-class LoggerSerial
-{
-    friend class LoggerSocket;
-
-public:
-    void begin();
-
-    constexpr bool ready() const { return true; }
-
-    void log()
-    {
-        Serial.println();
-    }
-
-    template< typename Arg0, typename ...Args >
-    void log( Arg0&& arg0, Args&&... args )
-    {
-        append( std::forward< Arg0 >( arg0 ));
-        log( std::forward< Args >( args )... );
-    }
-
-private:
-    template< typename Arg >
-    auto append( Arg&& value )
-    -> typename std::enable_if< std::is_same< decltype( Serial.print( std::forward< Arg >( value ))), size_t >::value >::type
-    {
-        Serial.print( std::forward< Arg >( value ));
-    }
-
-    template< typename Arg >
-    auto append( Arg&& value )
-    -> typename std::enable_if< std::is_same< decltype( Serial.print( toString( std::forward< Arg >( value )))), size_t >::value >::type
-    {
-        Serial.print( toString( std::forward< Arg >( value )));
-    }
-};
-
+/*
 class LoggerSocket
 {
 public:
@@ -117,12 +102,13 @@ public:
     template< typename ...Args >
     void log( Args&&... args ) {}
 };
+*/
 
 #if defined( LOGGER_SERIAL )
+#   include "LoggerSerial.hpp"
 using LoggerClass = LoggerSerial;
-#elif defined( LOGGER_SOCKET )
-using LoggerClass = LoggerSocket;
 #else
+#   include "LoggerNoop.hpp"
 using LoggerClass = LoggerNoop;
 #endif
 
@@ -131,9 +117,7 @@ extern LoggerClass Logger;
 template< typename ...Args >
 void log( Args&&... args )
 {
-    if ( Logger.ready() ) {
-        Logger.log( detail::timestamp(), std::forward< Args >( args )... );
-    }
+    Logger.log( detail::Timestamp(), std::forward< Args >( args )... );
 }
 
 #endif //ESP8266_IOT_LOGGER_HPP
