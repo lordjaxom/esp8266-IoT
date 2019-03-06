@@ -6,10 +6,9 @@
 class Device
 {
 public:
-    Device( String name, char const* stateName, char const* falseValue, char const* trueValue,
-            std::function< void( bool value ) > action ) noexcept;
-    Device( String name, char const* stateName, char const* falseValue = "OFF", char const* trueValue = "ON" ) noexcept;
-    Device( String name, std::function< void( bool value ) > action = []( bool ) {} ) noexcept;
+    Device( String name, char const* stateName, char const* falseValue = "OFF", char const* trueValue = "ON",
+            std::function< void( bool value ) > action = nullptr ) noexcept;
+    explicit Device( String name, std::function< void( bool value ) > action = nullptr ) noexcept;
     Device( Device const& ) = delete;
 
     String const& name() const { return name_; }
