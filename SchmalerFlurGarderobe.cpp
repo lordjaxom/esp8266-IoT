@@ -3,9 +3,7 @@
 #include "IoT/Device.hpp"
 #include "IoT/Input.hpp"
 #include "IoT/IoT.hpp"
-#include "IoT/Pcf8574.hpp"
 #include "IoT/SceneManager.hpp"
-#include "IoT/WireConfig.hpp"
 
 #include "ledgraph/fill_animation.hpp"
 #include "ledgraph/ledbuffer.hpp"
