@@ -23,6 +23,7 @@ public:
     {
         auto& data = data_[size_++];
         new(&data) T( std::forward< Args >( args )... );
+        return *reinterpret_cast< T* >( &data );
     }
 
 private:
@@ -55,7 +56,7 @@ SceneManager sceneManager( "Kueche" );
 void setup()
 {
     for ( uint8_t i = 0; i < 7; ++i ) {
-        auto& button = buttons.emplace( debounce( [i] { return !pcf8574Input.read( i ); } ));
+        auto& button = buttons.emplace( debounce( [i] { return pcf8574Input.read( i ); } ));
         auto& output = outputs.emplace( str( "Kueche/", deviceNames[i] ), [i]( bool value ) { pcf8574Output.set( i, value ); } );
 
         sceneManager.addLocalDevice( output );
