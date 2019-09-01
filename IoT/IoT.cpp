@@ -31,8 +31,7 @@ void IoTClass::begin()
     watchdogTimer_.start( watchdogDelay );
 
     wiFiConnectHandler_ = WiFi.onStationModeGotIP( [this]( WiFiEventStationModeGotIP const& ) { wiFiConnected(); } );
-    wiFiDisconnectHandler_ = WiFi.onStationModeDisconnected(
-            [this]( WiFiEventStationModeDisconnected const& ) { wiFiDisconnected(); } );
+    wiFiDisconnectHandler_ = WiFi.onStationModeDisconnected( [this]( WiFiEventStationModeDisconnected const& ) { wiFiDisconnected(); } );
     connectToWiFi();
 
     mqttClient_.onConnect( [this]( bool ) { mqttConnected(); } );
@@ -64,6 +63,10 @@ void IoTClass::loop()
 
 void IoTClass::publish( String const& topic, String const& payload, bool retain )
 {
+    if ( !mqttClient_.connected()) {
+        return;
+    }
+
     log( "publishing ", payload, " to ", topic );
 
     mqttClient_.publish( topic.c_str(), 1, retain, payload.c_str());
