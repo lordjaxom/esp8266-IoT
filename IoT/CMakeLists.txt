@@ -29,4 +29,5 @@ add_library(IoT STATIC
         Remote.cpp
         Remote.hpp
         Gpio.cpp
-        Gpio.hpp)
+        Gpio.hpp
+        Motion.hpp)
