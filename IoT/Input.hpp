@@ -11,6 +11,8 @@ public:
     explicit Input( std::function< bool() > input ) noexcept;
     Input( Input const& ) = delete;
 
+    bool get() const { return value_; }
+
     Event< void( bool ) > changeEvent;
 
 private:
