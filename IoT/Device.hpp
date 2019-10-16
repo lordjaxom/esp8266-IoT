@@ -20,6 +20,8 @@ public:
     void toggle() { set( !value_ ); }
 
 private:
+    void update();
+
     String name_;
     char const* stateName_;
     char const* falseValue_;

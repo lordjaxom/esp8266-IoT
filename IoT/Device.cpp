@@ -29,13 +29,16 @@ Device::Device( String name, std::function< void( bool value ) > action ) noexce
 
 void Device::set( bool value )
 {
-    if ( action_ ) {
-        log( "setting device ", name_, " to ", value ? trueValue_ : falseValue_ );
-        action_( value );
-    }
-
-    IoT.publish( str( "stat/", name_, "/", stateName_ ), value ? trueValue_ : falseValue_ );
-
     value_ = value;
+    update();
 }
 
+void Device::update()
+{
+    if ( action_ ) {
+        log( "setting device ", name_, " to ", value_ ? trueValue_ : falseValue_ );
+        action_( value_ );
+    }
+
+    IoT.publish( str( "stat/", name_, "/", stateName_ ), value_ ? trueValue_ : falseValue_ );
+}
