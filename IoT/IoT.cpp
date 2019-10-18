@@ -8,7 +8,7 @@ using namespace std;
 
 IoTClass::IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort ) noexcept
         : hostname_( str( "IoT-", clientId )),
-          watchdogTimer_( [this] { ESP.restart(); } ),
+          watchdogTimer_( [] { ESP.restart(); } ),
           wiFiSsid_( wiFiSsid ),
           wiFiPassword_( wiFiPassword ),
           wiFiReconnectTimer_( [this] { connectToWiFi(); } ),
@@ -45,6 +45,8 @@ void IoTClass::begin()
     updateServer_.setup( &webServer_, "/update", "admin", "admin" );
 
     beginEvent();
+
+    timestamp_ = millis();
 }
 
 void IoTClass::loop()
@@ -53,12 +55,11 @@ void IoTClass::loop()
 
     loopEvent();
 
-    uint32_t timestamp = millis();
-    uint32_t elapsed = timestamp - timestamp_;
+    uint32_t elapsed = millis() - timestamp_;
     if ( elapsed < tick ) {
         delay( tick - elapsed );
     }
-    timestamp_ = timestamp;
+    timestamp_ = millis();
 }
 
 void IoTClass::publish( String const& topic, String const& payload, bool retain )
