@@ -1,4 +1,5 @@
 #include "IoT/Debounce.hpp"
+#include "IoT/Gpio.hpp"
 #include "IoT/IoT.hpp"
 #include "IoT/PushButton.hpp"
 #include "IoT/Remote.hpp"
@@ -7,15 +8,13 @@
 
 IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
-PushButton button( debounce( [] { return digitalRead( 0 ) == LOW; } ));
+PushButton button( debounce( gpioInput( 0 )));
 Remote output( "Kueche/Vitrinen" );
 
 SceneManager sceneManager( "Kueche" );
 
 void setup()
 {
-    pinMode( 0, INPUT_PULLUP );
-
     button.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output, clicked ); };
 
     sceneManager.addLocalDevice( output, {} );
