@@ -21,7 +21,7 @@ class IoTClass
     static char const *clientId;
 
 public:
-    static constexpr uint32_t tick = 10;
+    static constexpr uint32_t tick = 50;
 
     IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort ) noexcept;
     IoTClass( IoTClass const& ) = delete;
@@ -35,8 +35,7 @@ public:
     Event< void() > wiFiConnectedEvent;
     Event< void() > wiFiDisconnectedEvent;
     Event< void() > beginEvent;
-    Event< void() > loopAlwaysEvent;
-    Event< void() > loopTickEvent;
+    Event< void() > loopEvent;
 
 private:
     void connectToWiFi();

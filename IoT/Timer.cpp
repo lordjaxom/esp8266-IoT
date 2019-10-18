@@ -8,7 +8,7 @@ using namespace std;
 Timer::Timer( function< void() > handler ) noexcept
         : handler_( move( handler ))
 {
-    IoT.loopTickEvent += [this] { loop(); };
+    IoT.loopEvent += [this] { loop(); };
 }
 
 void Timer::start( uint32_t timeout )

@@ -46,7 +46,7 @@ vector< Scene > offScenes( vector< Scene > const& onScenes, vector< Scene > cons
 SceneManager::SceneManager( char const* zone )
         : zone_( zone )
 {
-    IoT.loopTickEvent += [this] { loop(); };
+    IoT.loopEvent += [this] { loop(); };
     IoT.subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { changeScene( message ); } );
 }
 

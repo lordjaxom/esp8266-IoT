@@ -42,7 +42,7 @@ void setup()
 
     motionInput.changeEvent += []( bool value ) { motionDevice.set( value ); };
 
-    IoT.loopTickEvent += [] {
+    IoT.loopEvent += [] {
         switch ( animation.to_ulong()) {
             case 0:
                 offAnimation.animate();

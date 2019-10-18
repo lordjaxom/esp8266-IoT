@@ -8,7 +8,7 @@ using namespace std;
 Input::Input( function< bool() > input ) noexcept
         : input_( move( input ))
 {
-    IoT.loopTickEvent += [this] { this->loop(); };
+    IoT.loopEvent += [this] { this->loop(); };
 }
 
 void Input::loop()

@@ -10,7 +10,7 @@ PushButton::PushButton( function< bool() > input ) noexcept
         : input_( move( input )),
           timer_( [this] { expired(); } )
 {
-    IoT.loopTickEvent += [this] { this->loop(); };
+    IoT.loopEvent += [this] { loop(); };
 }
 
 void PushButton::loop()

@@ -51,14 +51,14 @@ void IoTClass::loop()
 {
     webServer_.handleClient();
 
-    loopAlwaysEvent();
+    loopEvent();
 
     uint32_t timestamp = millis();
     uint32_t elapsed = timestamp - timestamp_;
-    if ( elapsed > tick ) {
-        timestamp_ = timestamp;
-        loopTickEvent();
+    if ( elapsed < tick ) {
+        delay( tick - elapsed );
     }
+    timestamp_ = timestamp;
 }
 
 void IoTClass::publish( String const& topic, String const& payload, bool retain )

@@ -8,7 +8,7 @@
 AvrI2C::AvrI2C( WireConfig& wire, uint8_t address )
         : address_( address )
 {
-    IoT.loopTickEvent += [this] { loop(); };
+    IoT.loopEvent += [this] { loop(); };
 }
 
 void AvrI2C::loop()
