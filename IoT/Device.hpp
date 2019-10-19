@@ -6,9 +6,29 @@
 class Device
 {
 public:
+    /**
+     * Initializes a switchable device.
+     *
+     * Publishes to stat/<name>/<stateName>
+     * Subscribes to cmnd/<name>/<stateName> if action is specified
+     *
+     * @param name
+     * @param stateName
+     * @param falseValue
+     * @param trueValue
+     * @param action
+     */
     Device( String name, char const* stateName, char const* falseValue = "OFF", char const* trueValue = "ON",
             std::function< void( bool value ) > action = nullptr ) noexcept;
+
+    /**
+     * Initializes a switchable device with stateName "POWER", falseValue "OFF" and trueValue "ON".
+     *
+     * @param name
+     * @param action
+     */
     explicit Device( String name, std::function< void( bool value ) > action = nullptr ) noexcept;
+
     Device( Device const& ) = delete;
 
     String const& name() const { return name_; }
