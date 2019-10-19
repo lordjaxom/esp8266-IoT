@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(esp8266_IoT CXX)
 
 find_package(ArduinoEsp8266 REQUIRED COMPONENTS
+        ArduinoJson
         AsyncMqttClient
         ESP8266HTTPUpdateServer
         ESP8266WebServer
