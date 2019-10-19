@@ -18,9 +18,9 @@ class IoTClass
     static constexpr uint32_t watchdogDelay = 60000;
     static constexpr uint32_t reconnectDelay = 1000;
 
+public:
     static char const *clientId;
 
-public:
     static constexpr uint32_t tick = 10;
 
     IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort ) noexcept;
