@@ -17,7 +17,7 @@ void setup()
 {
     button.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output, clicked ); };
 
-    sceneManager.addLocalDevice( output, {} );
+    sceneManager.addLocalDevice( output );
     
     IoT.begin();
 }

@@ -12,11 +12,12 @@ enum class Scene : uint8_t
     OFF,
     SCENE1,
     SCENE2,
-    SLEEP = 64,
+    SCENE3,
+    SCENE4,
     UNKNOWN = 0xff
 };
 
-static constexpr Scene allScenes[] { Scene::OFF, Scene::SCENE1, Scene::SCENE2, Scene::SLEEP };
+static constexpr Scene allScenes[] { Scene::OFF, Scene::SCENE1, Scene::SCENE2, Scene::SCENE3, Scene::SCENE4 };
 
 std::vector< Scene > offScenes( std::vector< Scene > const& onScenes, std::vector< Scene > const& ignoredScenes );
 
@@ -29,12 +30,9 @@ public:
     void addSceneEvent( Scene scene, std::function< void() > handler );
 
     template< typename Device >
-    void addLocalDevice( Device& device, std::vector< Scene > const& sleepScenes = { Scene::SLEEP } )
+    void addLocalDevice( Device& device )
     {
         devices_.emplace( device.name(), [&device] { device.toggle(); } );
-        for ( auto scene : sleepScenes ) {
-            sceneEvents_[scene] += [&device] { device.set( false ); };
-        }
     }
 
     template< typename Device >
@@ -63,17 +61,15 @@ public:
     }
 
 private:
-    void loop();
+    String topic( char const* command ) const;
 
-    void changeScene( String const& sceneName );
-    void changeScene( Scene scene, bool publish = true );
+    void scene( String const& message );
+    void scene( Scene scene, bool publish = true );
 
     char const* zone_;
     Scene scene_ {};
-    std::map< Scene, Event < void() > >
-    sceneEvents_;
+    std::map< Scene, Event < void() > > sceneEvents_;
     std::map< StringView, std::function< void() > > devices_;
-    std::multimap< Scene, uint32_t > publishedScenes_;
 };
 
 #endif // ESP8266_IOT_SCENEMANAGER_HPP

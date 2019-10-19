@@ -2,11 +2,14 @@
 #include <utility>
 
 #include "IoT.hpp"
+#include "Json.hpp"
 #include "Logger.hpp"
 #include "SceneManager.hpp"
 #include "String.hpp"
 
 using namespace std;
+
+static constexpr size_t jsonMessageSize = 256;
 
 static char const* toString( Scene scene )
 {
@@ -17,8 +20,10 @@ static char const* toString( Scene scene )
             return "SCENE1";
         case Scene::SCENE2:
             return "SCENE2";
-        case Scene::SLEEP:
-            return "SLEEP";
+        case Scene::SCENE3:
+            return "SCENE3";
+        case Scene::SCENE4:
+            return "SCENE4";
         default:
             return "";
     }
@@ -29,7 +34,8 @@ static Scene toScene( String const& scene )
     if ( scene == "OFF" ) return Scene::OFF;
     if ( scene == "SCENE1" ) return Scene::SCENE1;
     if ( scene == "SCENE2" ) return Scene::SCENE2;
-    if ( scene == "SLEEP" ) return Scene::SLEEP;
+    if ( scene == "SCENE3" ) return Scene::SCENE3;
+    if ( scene == "SCENE4" ) return Scene::SCENE4;
     return Scene::UNKNOWN;
 }
 
@@ -46,19 +52,12 @@ vector< Scene > offScenes( vector< Scene > const& onScenes, vector< Scene > cons
 SceneManager::SceneManager( char const* zone )
         : zone_( zone )
 {
-    IoT.loopTickEvent += [this] { loop(); };
-    IoT.subscribe( str( "cmnd/", zone_, "/LIGHTSCENE" ), [this]( String message ) { changeScene( message ); } );
+    IoT.subscribe( topic( "SCENE" ), [this]( String message ) { scene( message ); } );
 }
 
-void SceneManager::loop()
+String SceneManager::topic( char const* command ) const
 {
-    for ( auto it = publishedScenes_.begin(); it != publishedScenes_.end(); ) {
-        if ( --it->second == 0 ) {
-            it = publishedScenes_.erase( it );
-        } else {
-            ++it;
-        }
-    }
+    return str( "cmnd/", zone_, "/", command );
 }
 
 void SceneManager::addSceneEvent( Scene scene, function< void() > handler )
@@ -69,37 +68,41 @@ void SceneManager::addSceneEvent( Scene scene, function< void() > handler )
 void SceneManager::sceneButtonClicked( unsigned clicked )
 {
     if ( clicked == 1 ) {
-        changeScene( scene_ == Scene::OFF || scene_ == Scene::SLEEP ? Scene::SCENE1 : Scene::OFF );
-    } else if ( clicked > 1 && clicked <= 2 ) {
-        changeScene( static_cast< Scene >( static_cast< uint8_t >( Scene::OFF ) + clicked ));
-    } else if ( clicked == 0 ) {
-        changeScene( Scene::SLEEP );
+        scene( scene_ == Scene::OFF ? Scene::SCENE1 : Scene::OFF );
+    } else if ( clicked > 1 && clicked <= 4 ) {
+        scene( static_cast< Scene >( static_cast< uint8_t >( Scene::OFF ) + clicked ));
     }
 }
 
-void SceneManager::changeScene( String const& sceneName )
+void SceneManager::scene( String const& message )
 {
-    Scene scene = toScene( sceneName );
-    if ( scene != Scene::UNKNOWN ) {
-        auto it = publishedScenes_.find( scene );
-        if ( it == publishedScenes_.end()) {
-            changeScene( scene, false );
-        } else {
-            publishedScenes_.erase( it );
-        }
+    StaticJsonDocument< jsonMessageSize > json;
+    if ( deserializeJson( json, message )) {
+        return;
     }
+    if ( json["source"] == IoTClass::clientId ) {
+        return;
+    }
+
+    Scene scene = toScene( json["scene"] );
+    if ( scene == Scene::UNKNOWN ) {
+        return;
+    }
+    this->scene( scene, false );
 }
 
-void SceneManager::changeScene( Scene scene, bool publish )
+void SceneManager::scene( Scene scene, bool publish )
 {
     log( "switching to scene ", scene, " in zone ", zone_ );
 
     sceneEvents_[scene]();
+
     if ( publish ) {
-        IoT.publish( str( "cmnd/", zone_, "/LIGHTSCENE" ), toString( scene ));
-        publishedScenes_.emplace( scene, 1000 / IoTClass::tick );
+        StaticJsonDocument< jsonMessageSize > json;
+        json["source"] = IoTClass::clientId;
+        json["scene"] = toString( scene );
+        IoT.publish( topic( "SCENE" ), str( json ));
     }
 
     scene_ = scene;
 }
-
