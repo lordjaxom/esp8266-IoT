@@ -11,7 +11,7 @@ Pcf8574::Pcf8574( WireConfig& wire, uint8_t address, uint8_t outputMask ) noexce
           outputMask_( outputMask ),
           output_( 0xff )
 {
-    IoT.loopTickEvent += [this] { this->loop(); };
+    IoT.loopEvent += [this] { this->loop(); };
 }
 
 void Pcf8574::loop()

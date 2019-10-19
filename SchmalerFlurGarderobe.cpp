@@ -35,7 +35,7 @@ void setup()
     sceneManager.addSceneDevice( ledstreifenWeiss, { Scene::SCENE1, Scene::SCENE2 } );
     sceneManager.addSceneDevice( ledstreifenBunt, { Scene::OFF } );
 
-    IoT.loopTickEvent += [] {
+    IoT.loopEvent += [] {
         switch ( neoPixelState ) {
             case 0:
                 neoPixelBus.ClearTo( 0 );

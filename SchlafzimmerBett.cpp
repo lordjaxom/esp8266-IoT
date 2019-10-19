@@ -58,7 +58,7 @@ void setup()
 //    input1.changeEvent += []( bool ) { update(); };
 //    input2.changeEvent += []( bool ) { update(); };
 
-    IoT.loopTickEvent += [] { update(); };
+    IoT.loopEvent += [] { update(); };
 
     IoT.begin();
 
