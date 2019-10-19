@@ -1,7 +1,5 @@
 #include <utility>
 
-#include <utility>
-
 #include "Device.hpp"
 #include "IoT.hpp"
 #include "Logger.hpp"
