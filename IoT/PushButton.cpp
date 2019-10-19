@@ -35,7 +35,7 @@ void PushButton::expired()
     if ( value_ ) {
         finished_ = true;
         if ( clicks_ == 0 ) {
-            clickedEvent( 0 );
+            longClickedEvent();
         }
     } else {
         clickedEvent( clicks_ );
