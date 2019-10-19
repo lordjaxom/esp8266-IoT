@@ -31,5 +31,7 @@ add_library(IoT STATIC
         Gpio.cpp
         Gpio.hpp
         Motion.hpp
+        Command.cpp
+        Command.hpp
         Json.hpp
 )
