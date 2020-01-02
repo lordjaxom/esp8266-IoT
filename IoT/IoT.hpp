@@ -21,8 +21,9 @@ class IoTClass
 public:
     static char const *clientId;
 
-    static constexpr uint32_t tick = 50;
+    static constexpr uint32_t tick = 10;
 
+    IoTClass( char const* topic, char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort ) noexcept;
     IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort ) noexcept;
     IoTClass( IoTClass const& ) = delete;
 
@@ -38,6 +39,10 @@ public:
     Event< void() > loopEvent;
 
 private:
+    IoTClass( String clientId, String topic,
+              char const* wiFiSsid, char const* wiFiPassword,
+              char const* mqttIp, uint16_t mqttPort ) noexcept;
+
     void connectToWiFi();
     void connectToMqtt();
 
@@ -48,7 +53,9 @@ private:
     void mqttDisconnected();
     void mqttMessage( char const* topic, char const* payload, size_t length );
 
-    String hostname_; // must stay constant?
+    String const clientId_; // must stay constant
+    String const topic_; // must stay constant
+    String const hostname_; // must stay constant
     Timer watchdogTimer_;
 
     char const* wiFiSsid_;
@@ -59,7 +66,7 @@ private:
 
     char const* mqttIp_;
     uint16_t mqttPort_;
-    String mqttWillTopic_; // must stay constant since mqtt client does not copy will
+    String const mqttWillTopic_; // must stay constant
     Timer mqttReconnectTimer_;
     AsyncMqttClient mqttClient_;
     std::map< String, std::function< void( String payload ) > > mqttSubscriptions_;

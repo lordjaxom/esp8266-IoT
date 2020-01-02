@@ -6,7 +6,6 @@
 #include "IoT/IoT.hpp"
 #include "IoT/Logger.hpp"
 #include "IoT/Motion.hpp"
-#include "IoT/SceneManager.hpp"
 #include "IoT/Timer.hpp"
 
 using namespace std;
@@ -19,15 +18,13 @@ RgbColor const onColor( 0xFF );
 
 NeoPixelBus< NeoGrbFeature, NeoEsp8266Uart1800KbpsMethod > neoPixelBus( 36 );
 
-IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
+IoTClass IoT( "Sleep/Light/Floor", "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
 Input input0( motion( 5000, gpioInput( 12, false )));
 Input input1( motion( 5000, gpioInput( 14, false )));
 Input input2( motion( 5000, gpioInput( 16, false )));
 
-Device unterBett( "Schlafzimmer/UnterBett" /*, []( bool ) { update(); }*/ );
-
-SceneManager sceneManager( "Schlafzimmer" );
+Device unterBett( "Sleep/Light/Floor" /*, []( bool ) { update(); }*/ );
 
 void update()
 {
@@ -51,8 +48,6 @@ void update()
 void setup()
 {
     neoPixelBus.Begin();
-
-    sceneManager.addSceneDevice( unterBett, { Scene::SCENE2 } );
 
 //    input0.changeEvent += []( bool ) { update(); };
 //    input1.changeEvent += []( bool ) { update(); };

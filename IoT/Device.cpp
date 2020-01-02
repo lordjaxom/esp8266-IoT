@@ -20,6 +20,11 @@ Device::Device( String name, char const* stateName, char const* falseValue, char
     }
 }
 
+Device::Device( String name, char const* stateName, std::function< void( bool value ) > action ) noexcept
+        : Device( move( name ), stateName, "OFF", "ON", move( action ))
+{
+}
+
 Device::Device( String name, std::function< void( bool value ) > action ) noexcept
         : Device( move( name ), "POWER", "OFF", "ON", move( action ))
 {

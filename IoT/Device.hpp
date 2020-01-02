@@ -22,6 +22,15 @@ public:
             std::function< void( bool value ) > action = nullptr ) noexcept;
 
     /**
+     * Initializes a switchable device with falseValue "OFF" and trueValue "ON".
+     *
+     * @param name
+     * @param stateName
+     * @param action
+     */
+    Device( String name, char const* stateName, std::function< void( bool value ) > action = nullptr ) noexcept;
+
+    /**
      * Initializes a switchable device with stateName "POWER", falseValue "OFF" and trueValue "ON".
      *
      * @param name
@@ -40,6 +49,7 @@ public:
     void toggle() { set( !value_ ); }
 
 private:
+    void command( String const& message );
     void update();
 
     String name_;
