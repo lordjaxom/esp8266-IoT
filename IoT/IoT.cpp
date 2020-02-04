@@ -7,6 +7,10 @@
 
 using namespace std;
 
+#if defined( IOT_TARGET_NAME )
+static char const* IoTClass::defaultClientId = IOT_TARGET_NAME;
+#endif
+
 static String toClientId( char const* topic )
 {
     String clientId( topic );
@@ -20,7 +24,7 @@ IoTClass::IoTClass( char const* topic, char const* wiFiSsid, char const* wiFiPas
 }
 
 IoTClass::IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort ) noexcept
-        : IoTClass( clientId, clientId, wiFiSsid, wiFiPassword, mqttIp, mqttPort )
+        : IoTClass( defaultClientId, defaultClientId, wiFiSsid, wiFiPassword, mqttIp, mqttPort )
 {
 }
 

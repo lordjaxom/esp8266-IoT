@@ -4,9 +4,10 @@
 class Remote
 {
 public:
-    explicit Remote( String name ) noexcept;
+    Remote( char const* topic, char const* stateName ) noexcept;
+    explicit Remote( char const* topic ) noexcept;
 
-    String const& name() const { return name_; }
+    String const& name() const { return cmndTopic_; } // something arbitrarily unique
 
     bool get() const { return value_; }
 
@@ -15,7 +16,7 @@ public:
     void toggle() { set( !value_ ); }
 
 private:
-    String name_;
+    String cmndTopic_;
     bool value_ {};
 };
 

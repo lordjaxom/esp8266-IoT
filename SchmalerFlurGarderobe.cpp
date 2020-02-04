@@ -17,8 +17,8 @@ auto buntAnimation = warpAnimation< 10, 40, 20, 25, 100, 25 >( neoPixelBuffer );
 
 IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
-Device ledstreifenWeiss( "SchmalerFlur/GarderobeWeiss" );
-Device ledstreifenBunt( "SchmalerFlur/GarderobeBunt" );
+//Device ledstreifenWeiss( "SchmalerFlur/GarderobeWeiss" ); // command -> name
+//Device ledstreifenBunt( "SchmalerFlur/GarderobeBunt" );
 SceneManager sceneManager( "SchmalerFlur" );
 
 bool lastMotion;

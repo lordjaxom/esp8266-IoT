@@ -6,6 +6,7 @@
 #include "IoT/IoT.hpp"
 #include "IoT/Logger.hpp"
 #include "IoT/Motion.hpp"
+#include "IoT/SceneManager.hpp"
 #include "IoT/Timer.hpp"
 
 using namespace std;
@@ -24,7 +25,9 @@ Input input0( motion( 5000, gpioInput( 12, false )));
 Input input1( motion( 5000, gpioInput( 14, false )));
 Input input2( motion( 5000, gpioInput( 16, false )));
 
-Device unterBett( "Sleep/Light/Floor" /*, []( bool ) { update(); }*/ );
+Device unterBett /* ( []( bool ) { update(); } ) */;
+
+SceneManager sceneManager( "Sleep" );
 
 void update()
 {
@@ -54,6 +57,8 @@ void setup()
 //    input2.changeEvent += []( bool ) { update(); };
 
     IoT.loopEvent += [] { update(); };
+
+    sceneManager.addSceneDevice( unterBett, { Scene::SCENE2 } );
 
     IoT.begin();
 

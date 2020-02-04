@@ -12,8 +12,8 @@ WireConfig wireConfig( 2, 0 );
 AvrI2C avr2ic( wireConfig, 2 );
 
 PushButton button( debounce( [] { return avr2ic.read(); } ));
-Device schwarzlicht( "Gaestezimmer/Schwarzlicht", []( bool value ) { avr2ic.set( 0, value ); } );
-Device deckenlampe( "Gaestezimmer/Deckenlampe", []( bool value ) { avr2ic.set( 1, value ); } );
+//Device schwarzlicht( "Gaestezimmer/Schwarzlicht", []( bool value ) { avr2ic.set( 0, value ); } ); command -> name
+//Device deckenlampe( "Gaestezimmer/Deckenlampe", []( bool value ) { avr2ic.set( 1, value ); } );
 Command standby( "Gaestezimmer", "STANDBY" );
 
 SceneManager sceneManager( "Gaestezimmer" );

@@ -6,14 +6,14 @@
 using namespace std;
 
 Timer::Timer( function< void() > handler ) noexcept
-        : handler_( move( handler ))
+        : loopSubscription_( IoT.loopEvent.subscribe( [this] { loop(); } )),
+          handler_( move( handler ))
 {
-    IoT.loopEvent += [this] { loop(); };
 }
 
 void Timer::start( uint32_t timeout )
 {
-    timeout_ = timeout / IoTClass::tick;
+    timeout_ = timeout;
 }
 
 void Timer::stop()
@@ -23,7 +23,10 @@ void Timer::stop()
 
 void Timer::loop()
 {
-    if ( timeout_ > 0 && --timeout_ == 0 ) {
+    if ( timeout_ > IoTClass::tick ) {
+        timeout_ -= IoTClass::tick;
+    } else if ( timeout_ > 0 ) {
+        timeout_ = 0;
         handler_();
     }
 }

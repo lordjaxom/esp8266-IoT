@@ -24,8 +24,8 @@ auto buntAnimation = warpAnimation( neoPixelBuffer );
 
 IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
-Device ledstreifenWeiss( "Kellerflur/WerkstattStripeWeiss", []( bool value ) { animation.set( 1, value ); } );
-Device ledstreifenBunt( "Kellerflur/WerkstattStripeBunt", []( bool value ) { animation.set( 0, value ); } );
+//Device ledstreifenWeiss( "Kellerflur/WerkstattStripeWeiss", []( bool value ) { animation.set( 1, value ); } ); // command -> name
+//Device ledstreifenBunt( "Kellerflur/WerkstattStripeBunt", []( bool value ) { animation.set( 0, value ); } );
 SceneManager sceneManager( "Kellerflur" );
 
 Input motionInput( [] { return digitalRead( 0 ) == HIGH; } );

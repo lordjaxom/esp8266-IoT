@@ -63,8 +63,8 @@ public:
 private:
     String topic( char const* command ) const;
 
-    void scene( String const& message );
-    void scene( Scene scene, bool publish = true );
+    void sceneReceived( String const& message );
+    void changeScene( Scene scene, bool publish = true );
 
     char const* zone_;
     Scene scene_ {};

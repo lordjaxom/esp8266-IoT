@@ -18,14 +18,17 @@ class IoTClass
     static constexpr uint32_t watchdogDelay = 60000;
     static constexpr uint32_t reconnectDelay = 1000;
 
-public:
-    static char const *clientId;
+    static char const *defaultClientId;
 
-    static constexpr uint32_t tick = 10;
+public:
+    static constexpr uint32_t tick = 13; // some odd number to account for AC buttons
 
     IoTClass( char const* topic, char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort ) noexcept;
     IoTClass( char const* wiFiSsid, char const* wiFiPassword, char const* mqttIp, uint16_t mqttPort ) noexcept;
     IoTClass( IoTClass const& ) = delete;
+
+    String const& clientId() const { return clientId_; }
+    String const& topic() const { return topic_; }
 
     void begin();
     void loop();
@@ -76,10 +79,6 @@ private:
 
     uint32_t timestamp_ {};
 };
-
-#if defined( IOT_TARGET_NAME )
-char const* IoTClass::clientId = IOT_TARGET_NAME;
-#endif
 
 extern IoTClass IoT;
 

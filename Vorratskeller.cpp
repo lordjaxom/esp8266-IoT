@@ -10,11 +10,11 @@
 IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
 PushButton button1( debounce( gpioInput( 14 )));
-Device output1( "Vorratskeller/Deckenlampe", gpioOutput( 4 ));
+//Device output1( "Vorratskeller/Deckenlampe", gpioOutput( 4 )); // command -> name
 SceneManager sceneManager1( "Vorratskeller" );
 
 PushButton button2( debounce( gpioInput( 12 )));
-Device output2( "Naehstube/Deckenlampe", gpioOutput( 5 ));
+//Device output2( "Naehstube/Deckenlampe", gpioOutput( 5 ));
 SceneManager sceneManager2( "Naehstube" );
 
 Input motionInput( gpioInput( 13, false ));

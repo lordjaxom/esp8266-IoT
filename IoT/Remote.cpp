@@ -6,13 +6,18 @@
 
 using namespace std;
 
-Remote::Remote( String name ) noexcept
-        : name_( move( name ))
+Remote::Remote( char const* topic, char const* stateName ) noexcept
+        : cmndTopic_( str( "cmnd/", topic, "/", stateName ))
 {
-    IoT.subscribe( str( "stat/", name_, "/POWER" ), [this]( String message ) { value_ = message == "ON"; } );
+    IoT.subscribe( str( "stat/", topic, "/", stateName ), [this]( String message ) { value_ = message == "ON"; } );
+}
+
+Remote::Remote( char const* topic ) noexcept
+        : Remote( topic, "POWER" )
+{
 }
 
 void Remote::set( bool value )
 {
-    IoT.publish( str( "cmnd/", name_, "/POWER" ), value ? "ON" : "OFF" );
+    IoT.publish( cmndTopic_, value ? "ON" : "OFF" );
 }

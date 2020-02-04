@@ -8,9 +8,9 @@
 
 using namespace std;
 
-Command::Command( String name, char const* commandName, function< void() > action )
+Command::Command( String name, String command, function< void() > action )
         : name_( move( name )),
-          commandName_( commandName ),
+          command_( move( command )),
           action_( move( action ))
 {
     if ( action_ ) {
@@ -18,16 +18,21 @@ Command::Command( String name, char const* commandName, function< void() > actio
     }
 }
 
+Command::Command( String command, function< void() > action )
+        : Command( IoT.topic(), move( command ), move( action ))
+{
+}
+
 void Command::trigger()
 {
     StaticJsonDocument< 128 > json;
-    json["source"] = IoTClass::clientId;
-    IoT.publish( str( "cmnd/", name_, "/", commandName_ ), str( json ));
+    json["source"] = IoT.clientId();
+    IoT.publish( topic(), str( json ));
 }
 
 String Command::topic() const
 {
-    return str( "cmnd/", name_, "/", commandName_ );
+    return str( "cmnd/", name_, "/", command_ );
 }
 
 void Command::trigger( String const& message )
@@ -36,11 +41,9 @@ void Command::trigger( String const& message )
     if ( deserializeJson( json, message )) {
         return;
     }
-    if ( json["source"] == IoTClass::clientId ) {
+    if ( json["source"] == IoT.clientId() ) {
         return;
     }
 
     action_();
 }
-
-

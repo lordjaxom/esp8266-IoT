@@ -3,6 +3,8 @@
 
 #include <functional>
 
+#include "Event.hpp"
+
 class Timer
 {
 public:
@@ -17,6 +19,7 @@ public:
 private:
     void loop();
 
+    Event< void() >::Subscription loopSubscription_;
     std::function< void() > handler_;
     uint32_t timeout_ {};
 };

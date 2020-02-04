@@ -10,13 +10,15 @@ public:
      * A command publishes a topic when triggered from this Thing.
      * A command triggers an action (if given) when triggered from outside this Thing.
      *
-     * Publishes to cmnd/<name>/<commandName>
-     * Subscribes to cmnd/<name>/<commandName> if action is given
+     * Publishes to cmnd/<name>/<command>
+     * Subscribes to cmnd/<name>/<command> if action is given
      *
      * @param name
-     * @param commandName
+     * @param command
      */
-    Command( String name, char const* commandName, std::function< void() > action = nullptr );
+    Command( String name, String command, std::function< void() > action = nullptr );
+
+    explicit Command( String command, std::function< void () > action = nullptr );
 
     Command( Command const& ) = delete;
 
@@ -28,7 +30,7 @@ private:
     void trigger( String const& message );
 
     String name_;
-    char const* commandName_;
+    String command_;
     std::function< void() > action_;
 };
 

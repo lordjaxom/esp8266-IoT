@@ -7,16 +7,16 @@
 
 using namespace std;
 
-Device::Device( String name, char const* stateName, char const* falseValue, char const* trueValue,
+Device::Device( String name, String state, char const* falseValue, char const* trueValue,
                 function< void( bool value ) > action ) noexcept
         : name_( move( name )),
-          stateName_( stateName ),
+          state_( move( state )),
           falseValue_( falseValue ),
           trueValue_( trueValue ),
           action_( move( action ))
 {
     if ( action_ ) {
-        IoT.subscribe( str( "cmnd/", name_, "/", stateName_ ), [this]( String message ) { set( message == trueValue_ ); } );
+        IoT.subscribe( str( "cmnd/", name_, "/", state_ ), [this]( String message ) { set( message == trueValue_ ); } );
     }
 }
 
@@ -25,8 +25,13 @@ Device::Device( String name, char const* stateName, std::function< void( bool va
 {
 }
 
-Device::Device( String name, std::function< void( bool value ) > action ) noexcept
-        : Device( move( name ), "POWER", "OFF", "ON", move( action ))
+Device::Device( String state, std::function< void( bool value ) > action ) noexcept
+        : Device( IoT.topic(), move( state ), "OFF", "ON", move( action ))
+{
+}
+
+Device::Device( function< void( bool ) > action ) noexcept
+        : Device( "POWER", move( action ))
 {
 }
 
@@ -43,5 +48,5 @@ void Device::update()
         action_( value_ );
     }
 
-    IoT.publish( str( "stat/", name_, "/", stateName_ ), value_ ? trueValue_ : falseValue_ );
+    IoT.publish( str( "stat/", name_, "/", state_ ), value_ ? trueValue_ : falseValue_ );
 }

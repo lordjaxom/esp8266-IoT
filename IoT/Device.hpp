@@ -18,7 +18,7 @@ public:
      * @param trueValue
      * @param action
      */
-    Device( String name, char const* stateName, char const* falseValue = "OFF", char const* trueValue = "ON",
+    Device( String name, String state, char const* falseValue = "OFF", char const* trueValue = "ON",
             std::function< void( bool value ) > action = nullptr ) noexcept;
 
     /**
@@ -31,12 +31,19 @@ public:
     Device( String name, char const* stateName, std::function< void( bool value ) > action = nullptr ) noexcept;
 
     /**
-     * Initializes a switchable device with stateName "POWER", falseValue "OFF" and trueValue "ON".
+     * Initializes a switchable device with name from IoT, falseValue "OFF" and trueValue "ON".
      *
-     * @param name
+     * @param state
      * @param action
      */
-    explicit Device( String name, std::function< void( bool value ) > action = nullptr ) noexcept;
+    explicit Device( String state, std::function< void( bool value ) > action = nullptr ) noexcept;
+
+    /**
+     * Initializes a switchable device with name from IoT, state "POWER", falseValue "OFF" and trueValue "ON".
+     *
+     * @param action
+     */
+    explicit Device( std::function< void( bool value ) > action = nullptr ) noexcept;
 
     Device( Device const& ) = delete;
 
@@ -49,11 +56,10 @@ public:
     void toggle() { set( !value_ ); }
 
 private:
-    void command( String const& message );
     void update();
 
     String name_;
-    char const* stateName_;
+    String state_;
     char const* falseValue_;
     char const* trueValue_;
     std::function< void( bool value ) > action_;

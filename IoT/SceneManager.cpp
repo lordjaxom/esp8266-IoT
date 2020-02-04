@@ -52,7 +52,7 @@ vector< Scene > offScenes( vector< Scene > const& onScenes, vector< Scene > cons
 SceneManager::SceneManager( char const* zone )
         : zone_( zone )
 {
-    IoT.subscribe( topic( "SCENE" ), [this]( String message ) { scene( message ); } );
+    IoT.subscribe( topic( "SCENE" ), [=]( String message ) { sceneReceived( message ); } );
 }
 
 String SceneManager::topic( char const* command ) const
@@ -68,19 +68,19 @@ void SceneManager::addSceneEvent( Scene scene, function< void() > handler )
 void SceneManager::sceneButtonClicked( unsigned clicked )
 {
     if ( clicked == 1 ) {
-        scene( scene_ == Scene::OFF ? Scene::SCENE1 : Scene::OFF );
+        changeScene( scene_ == Scene::OFF ? Scene::SCENE1 : Scene::OFF );
     } else if ( clicked > 1 && clicked <= 4 ) {
-        scene( static_cast< Scene >( static_cast< uint8_t >( Scene::OFF ) + clicked ));
+        changeScene( static_cast< Scene >( static_cast< uint8_t >( Scene::OFF ) + clicked ));
     }
 }
 
-void SceneManager::scene( String const& message )
+void SceneManager::sceneReceived( String const& message )
 {
     StaticJsonDocument< jsonMessageSize > json;
     if ( deserializeJson( json, message )) {
         return;
     }
-    if ( json["source"] == IoTClass::clientId ) {
+    if ( json["source"] == IoT.clientId() ) {
         return;
     }
 
@@ -88,10 +88,10 @@ void SceneManager::scene( String const& message )
     if ( scene == Scene::UNKNOWN ) {
         return;
     }
-    this->scene( scene, false );
+    this->changeScene( scene, false );
 }
 
-void SceneManager::scene( Scene scene, bool publish )
+void SceneManager::changeScene( Scene scene, bool publish )
 {
     log( "switching to scene ", scene, " in zone ", zone_ );
 
@@ -99,7 +99,7 @@ void SceneManager::scene( Scene scene, bool publish )
 
     if ( publish ) {
         StaticJsonDocument< jsonMessageSize > json;
-        json["source"] = IoTClass::clientId;
+        json["source"] = IoT.clientId();
         json["scene"] = toString( scene );
         IoT.publish( topic( "SCENE" ), str( json ));
     }

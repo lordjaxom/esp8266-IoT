@@ -14,7 +14,7 @@ static constexpr uint8_t outputPin = 5;
 IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
 PushButton button( debounce( gpioInput( buttonPin )));
-Device output( "Untitled/Output", gpioOutput( outputPin ));
+//Device output( "Untitled/Output", gpioOutput( outputPin )); command -> name
 Command standby( "Untitled", "STANDBY", [] { log( "STANDBY was triggered" ); } );
 
 SceneManager sceneManager( "Untitled" );

@@ -4,10 +4,13 @@
 #include <stdint.h>
 #include <utility>
 
+#include "IoT.hpp"
+#include "Logger.hpp"
+
 template< typename Input >
 class Debounce
 {
-    using Type = decltype( std::declval< Input >()());
+    static constexpr unsigned delay = 50 / IoTClass::tick;
 
 public:
     explicit Debounce( Input&& input ) noexcept
@@ -15,20 +18,27 @@ public:
     {
     }
 
-    Type operator()()
+    bool operator()()
     {
-        Type temp = value_ ^input_();
-        states_[0] = ~( states_[0] & temp );
-        states_[1] = states_[0] ^ ( states_[1] & temp );
-        temp &= states_[0] & states_[1];
-        value_ ^= temp;
+        bool state = input_();
+        if ( !state ) {
+            if ( state_ ) {
+                counter_ = delay;
+            } else if ( counter_ > 0 && --counter_ == 0 ) {
+                value_ = false;
+            }
+        } else if ( !state_ ) {
+            value_ = true;
+        }
+        state_ = state;
         return value_;
     }
 
 private:
     Input input_;
-    Type value_ {};
-    Type states_[2] {};
+    bool state_ {};
+    bool value_ {};
+    unsigned counter_ {};
 };
 
 template< typename Input >
