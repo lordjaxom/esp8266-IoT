@@ -8,23 +8,27 @@
 #include "IoT/Remote.hpp"
 #include "IoT/SceneManager.hpp"
 
-static constexpr uint8_t buttonPin = 12;
-static constexpr uint8_t outputPin = 5;
+IoTClass IoT( "Untitled/Light/Ceiling", "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
-IoTClass IoT( "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
+PushButton button1( debounce( gpioInput( 12 )));
+Device output1( "POWER1", gpioOutput( 5 ));
 
-PushButton button( debounce( gpioInput( buttonPin )));
-//Device output( "Untitled/Output", gpioOutput( outputPin )); command -> name
+PushButton button2( debounce( gpioInput( 14 )));
+Device output2( "POWER2", gpioOutput( 4 ));
+
 Command standby( "Untitled", "STANDBY", [] { log( "STANDBY was triggered" ); } );
 
 SceneManager sceneManager( "Untitled" );
 
 void setup()
 {
-    button.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
-    button.longClickedEvent += [] { standby.trigger(); };
+    sceneManager.addSceneDevice( output1, { Scene::SCENE1 } );
+    sceneManager.addSceneDevice( output2, { Scene::SCENE2 } );
 
-    sceneManager.addSceneDevice( output );
+    button1.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output1, clicked ); };
+    button2.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output2, clicked ); };
+    button1.longClickedEvent += [] { standby.trigger(); };
+    button2.longClickedEvent += [] { standby.trigger(); };
 
     IoT.begin();
 }
