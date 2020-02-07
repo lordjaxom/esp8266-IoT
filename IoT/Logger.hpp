@@ -6,9 +6,6 @@
 #include <type_traits>
 #include <utility>
 
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncTCPbuffer.h>
-
 namespace detail {
 
     class Timestamp

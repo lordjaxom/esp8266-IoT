@@ -6,7 +6,7 @@
 using namespace std;
 
 Timer::Timer( function< void() > handler ) noexcept
-        : loopSubscription_( IoT.loopEvent.subscribe( [this] { loop(); } )),
+        : subscription_( IoT.loopEvent.subscribe( [this] { loop(); } )),
           handler_( move( handler ))
 {
 }

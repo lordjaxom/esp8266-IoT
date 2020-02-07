@@ -19,7 +19,7 @@ public:
 private:
     void loop();
 
-    Event< void() >::Subscription loopSubscription_;
+    Event< void() >::Subscription subscription_;
     std::function< void() > handler_;
     uint32_t timeout_ {};
 };
