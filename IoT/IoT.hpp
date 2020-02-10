@@ -36,8 +36,6 @@ public:
     void publish( String const& topic, String const& payload, bool retain = false );
     void subscribe( String topic, std::function< void( String message ) > handler );
 
-    Event< void() > wiFiConnectedEvent;
-    Event< void() > wiFiDisconnectedEvent;
     Event< void() > beginEvent;
     Event< void() > loopEvent;
 

@@ -127,8 +127,6 @@ void IoTClass::wiFiConnected()
 
     connectToMqtt();
     webServer_.begin();
-
-    wiFiConnectedEvent();
 }
 
 void IoTClass::wiFiDisconnected()
@@ -141,8 +139,6 @@ void IoTClass::wiFiDisconnected()
     if ( !watchdogTimer_.active() ) {
         watchdogTimer_.start( watchdogDelay );
     }
-
-    wiFiDisconnectedEvent();
 }
 
 void IoTClass::mqttConnected()
@@ -176,8 +172,7 @@ void IoTClass::mqttDisconnected()
 void IoTClass::mqttMessage( char const* topic, char const* payload, size_t length )
 {
     String message;
-    message.reserve( length );
-    for_each( payload, payload + length, [&]( char ch ) { message += ch; } );
+    message.concat( payload, length );
 
     log( "received ", message, " from ", topic );
 
