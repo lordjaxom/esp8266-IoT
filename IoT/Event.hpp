@@ -7,25 +7,21 @@
 #include <memory>
 #include <utility>
 
-using Subscription = std::unique_ptr< void, std::function< void ( void const* ) > >;
+using Subscription = std::unique_ptr< bool, void (*)( bool* deleted ) >;
 
 template< typename Signature >
 class Event;
 
 template< typename ...Args >
-class Event< void( Args... ) > final
+class Event< void ( Args... ) > final
 {
-    using Signature = void( Args... );
+    using Signature = void ( Args... );
     using Handler = std::function< Signature >;
-    using Container = std::list< std::pair< Handler, bool > >;
-    using Iterator = typename Container::iterator;
 
 public:
     Event() noexcept {}
 
     Event( Event const& ) = delete;
-
-    size_t priorities() const { return priorities_; }
 
     Event& operator+=( Handler handler )
     {
@@ -33,20 +29,23 @@ public:
         return *this;
     }
 
-    Subscription subscribe( Handler handler, bool priority = false )
+    Subscription subscribe( Handler handler )
     {
         auto it = handlers_.emplace( handlers_.end(), std::move( handler ), false );
-        if ( priority ) {
-            ++priorities_;
-        }
-        return { this, [=]( void const* ) { unsubscribe( it, priority ); } };
+        return { &it->second, []( bool* deleted ) { *deleted = true; } };
     }
 
     template< typename ...T >
-    void operator()( T&& ... args )
+    void operator()( T&&... args )
     {
-        for ( auto it = handlers_.begin() ; it != handlers_.end() ; ) {
-            it->first( std::forward< T >( args )... );
+        // elements added inside handlers should not be invoked
+        auto it = handlers_.begin();
+        auto size = handlers_.size();
+        for ( size_t i = 0 ; i < size ; ++i ) {
+            // deleted flag might change during invocation
+            if ( !it->second ) {
+                it->first( std::forward< T >( args )... );
+            }
             if ( it->second ) {
                 it = handlers_.erase( it );
             } else {
@@ -56,16 +55,7 @@ public:
     }
 
 private:
-    void unsubscribe( Iterator it, bool priority )
-    {
-        it->second = true;
-        if ( priority ) {
-            --priorities_;
-        }
-    }
-
-    Container handlers_;
-    size_t priorities_ {};
+    std::list< std::pair< Handler, bool > > handlers_;
 };
 
 #endif // ESP8266_IOT_EVENT_HPP
