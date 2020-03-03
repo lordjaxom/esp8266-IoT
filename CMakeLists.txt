@@ -15,8 +15,6 @@ link_libraries(${ArduinoEsp8266_LIBRARIES})
 
 if (${CMAKE_BUILD_TYPE} STREQUAL Debug)
     add_definitions(-DLOGGER_SERIAL)
-elseif(${CMAKE_BUILD_TYPE} STREQUAL Testing)
-    add_definitions(-DLOGGER_SOCKET)
 endif()
 
 add_subdirectory(IoT)

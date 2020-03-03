@@ -2,7 +2,6 @@
 
 #include "Command.hpp"
 #include "IoT.hpp"
-#include "Logger.hpp"
 #include "Json.hpp"
 #include "String.hpp"
 

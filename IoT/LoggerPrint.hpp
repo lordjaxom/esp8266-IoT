@@ -7,16 +7,17 @@
 
 #include "LoggerBase.hpp"
 
-template< typename Print, Print& print >
 class LoggerPrint
-        : public LoggerBase< LoggerPrint< Print, print > >
+        : public LoggerBase< LoggerPrint >
 {
 public:
+    explicit LoggerPrint( Print& print ) : print_( print ) {}
+
     template< typename Arg >
     auto append( Arg&& arg )
-    -> typename std::enable_if< std::is_same< decltype( print.print( std::forward< Arg >( arg ))), size_t >::value >::type
+    -> typename std::enable_if< std::is_same< decltype( std::declval< Print >().print( std::forward< Arg >( arg ))), size_t >::value >::type
     {
-        print.print( std::forward< Arg >( arg ));
+        print_.print( std::forward< Arg >( arg ));
     }
 
     template< typename Arg >
@@ -28,13 +29,16 @@ public:
 
     void append( detail::Timestamp const& ts )
     {
-        print.printf( "%02lu:%02lu:%02lu.%03lu ", ts.h, ts.m, ts.s, ts.ms );
+        print_.printf( "%02lu:%02lu:%02lu.%03lu ", ts.h, ts.m, ts.s, ts.ms );
     }
 
     void flush()
     {
-        print.println();
+        print_.println();
     }
+
+private:
+    Print& print_;
 };
 
 #endif //ESP8266_IOT_LOGGERPRINT_HPP

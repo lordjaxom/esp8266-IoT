@@ -6,9 +6,11 @@
 #include "LoggerPrint.hpp"
 
 class LoggerSerial
-        : public LoggerPrint< HardwareSerial, Serial >
+        : public LoggerPrint
 {
 public:
+    LoggerSerial() : LoggerPrint( Serial ) {}
+
     void begin()
     {
         Serial.begin( 115200 );
