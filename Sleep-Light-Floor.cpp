@@ -14,7 +14,7 @@ using namespace std;
 void update();
 
 RgbColor const offColor( 0x00 );
-RgbColor const dimColor( 0x3F );
+RgbColor const dimColor( 0x28 );
 RgbColor const onColor( 0xFF );
 
 NeoPixelBus< NeoGrbFeature, NeoEsp8266Uart1800KbpsMethod > neoPixelBus( 36 );

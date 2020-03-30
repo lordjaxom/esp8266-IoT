@@ -22,13 +22,20 @@ SceneManager sceneManager( "Untitled" );
 
 void setup()
 {
-    sceneManager.addSceneDevice( output1, { Scene::SCENE1 } );
-    sceneManager.addSceneDevice( output2, { Scene::SCENE2 } );
+//    sceneManager.addSceneDevice( output1, { Scene::SCENE1 } );
+//    sceneManager.addSceneDevice( output2, { Scene::SCENE2 } );
+//
+//    button1.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output1, clicked ); };
+//    button2.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output2, clicked ); };
+//    button1.longClickedEvent += [] { standby.trigger(); };
+//    button2.longClickedEvent += [] { standby.trigger(); };
 
-    button1.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output1, clicked ); };
-    button2.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output2, clicked ); };
-    button1.longClickedEvent += [] { standby.trigger(); };
-    button2.longClickedEvent += [] { standby.trigger(); };
+    button1.clickedEvent += []( unsigned clicked ) {
+        IoT.publish( str( "tele/", IoT.topic(), "/LOGGING" ), str( "clicked ", String( clicked )));
+    };
+    button1.longClickedEvent += [] {
+        IoT.publish( str( "tele/", IoT.topic(), "/LOGGING" ), "longpressed" );
+    };
 
     IoT.begin();
 }

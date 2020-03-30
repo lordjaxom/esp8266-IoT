@@ -50,7 +50,6 @@ private:
     uint8_t pin_;
     Timer timer_;
     unsigned state_ {};
-    unsigned counter_ {};
     bool finished_ {};
 };
 
@@ -58,22 +57,31 @@ IoTClass IoT( "Living/Shutter/Back", "akvsoft", "sacomoco02047781", "192.168.178
 
 std::list< Command > commandQueue;
 
-int8_t currentDirection = 0;
+int currentDirection = 0;
 double currentPosition = 100;
 double targetPosition = currentPosition;
 uint32_t movementTimestamp;
 uint32_t reportTimestamp;
 
+template< typename... Args >
+static void log2( Args&&... args )
+{
+    String message = str( std::forward< Args >( args )... );
+    log( message );
+    IoT.publish( str( "tele/", IoT.topic(), "/TRACE" ), message );
+}
+
 static void triggerCommand()
 {
-    log( "triggering command ", currentDirection == 1 ? "DOWN" : "UP" );
+    log2( "triggering command ", currentDirection == 1 ? "DOWN" : "UP" );
     commandQueue.emplace_back( currentDirection == 1 ? pinDown : pinUp );
 }
 
 static void publishPosition()
 {
-    log( "publishing position ", static_cast< int >( currentPosition ));
-    IoT.publish( str( "stat/", IoT.topic(), "/SHUTTER1" ), String( static_cast< int >( currentPosition )));
+    String position( currentPosition, 0 );
+    log( "publishing position ", position );
+    IoT.publish( str( "stat/", IoT.topic(), "/SHUTTER1" ), position );
 }
 
 static void handleTopic( String const& message )
@@ -85,7 +93,7 @@ static void handleTopic( String const& message )
         desiredPosition = 100;
     } else if ( message == "STOP" ) {
         if ( currentDirection != 0 ) {
-            log( "received STOP while moving" );
+            log2( "received STOP while moving" );
             triggerCommand();
             targetPosition = currentPosition;
             currentDirection = 0;
@@ -93,32 +101,44 @@ static void handleTopic( String const& message )
         }
         return;
     } else {
-        log( "unknown command ", message );
-        return;
+        char* ptr;
+        unsigned desired = strtoul( message.c_str(), &ptr, 10 );
+        if ( *ptr == '\0' && desired >= 0 && desired <= 100 ) {
+            desiredPosition = desired;
+        } else {
+            log2( "unknown command ", message );
+            return;
+        }
     }
 
-    if ( desiredPosition == targetPosition ) {
-        log( "already moving to desired position, doing nothing" );
-        return;
-    }
+    int desiredDirection;
+    if ( ( desiredPosition == 0 || desiredPosition == 100 ) && currentDirection == 0 ) {
+        log2( "issuing hard move command due to UP or DOWN" );
+        desiredDirection = desiredPosition == 0 ? -1 : 1;
+    } else {
+        if ( desiredPosition == targetPosition ) {
+            log2( "already moving to desired position, doing nothing" );
+            return;
+        }
 
-    auto desiredDirection = static_cast< int8_t >( desiredPosition < currentPosition ? -1 : 1 );
-    if ( currentDirection == desiredDirection ) {
-        log( "already moving in desired direction, only updating target position" );
-        targetPosition = desiredPosition;
-        return;
-    }
+        desiredDirection = desiredPosition < currentPosition ? -1 : 1;
+        if ( currentDirection == desiredDirection ) {
+            log2( "already moving in desired direction, only updating target position" );
+            targetPosition = desiredPosition;
+            return;
+        }
 
-    if ( currentDirection != 0 ) {
-        log( "moving in wrong direction, stopping" );
-        triggerCommand();
+        if ( currentDirection != 0 ) {
+            log2( "moving in wrong direction, stopping" );
+            triggerCommand();
+        }
     }
 
     currentDirection = desiredDirection;
     targetPosition = desiredPosition;
     movementTimestamp = millis();
     reportTimestamp = movementTimestamp - 1000;
-    log( "starting movement" );
+    log2( "starting movement" );
     triggerCommand();
 }
 
@@ -134,8 +154,8 @@ static void handleTick()
 
     uint32_t timestamp = millis();
     if ( timestamp - reportTimestamp > 1000 ) {
-        log( "direction ", static_cast< int >( currentDirection ), " position ", static_cast< int >( currentPosition ),
-                " target ", static_cast< int >( targetPosition ));
+        log2( "direction ", String( static_cast< int >( currentDirection )), " position ", String( currentPosition, 0 ),
+                " target ", String( targetPosition, 0 ));
         reportTimestamp = timestamp;
     }
 
@@ -145,9 +165,9 @@ static void handleTick()
     if ( ( currentDirection == 1 && currentPosition >= targetPosition ) ||
             ( currentDirection == -1 && currentPosition <= targetPosition ) ){
         if ( targetPosition == 0 || targetPosition == 100 ) {
-            log( "reached final position, doing nothing" );
+            log2( "reached final position, doing nothing" );
         } else {
-            log( "reached target position, stopping" );
+            log2( "reached target position, stopping" );
             triggerCommand();
         }
         currentPosition = targetPosition;

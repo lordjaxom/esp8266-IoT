@@ -23,7 +23,7 @@ void PushButton::loop()
             timer_.start( 1000 );
         } else if ( !finished_ ) {
             ++clicks_;
-            timer_.start( 500 );
+            timer_.start( 200 );
         } else {
             finished_ = false;
         }
