@@ -32,7 +32,6 @@ public:
 private:
     void set( bool value )
     {
-        log( "setting button at pin ", static_cast< int >( pin_ ), " to ", value ? "HIGH" : "LOW" );
         digitalWrite( pin_, static_cast< uint8_t >( value ? HIGH : LOW ));
         timer_.start( triggerDelay );
         state_++;
@@ -71,6 +70,25 @@ static void log2( Args&&... args )
     IoT.publish( str( "tele/", IoT.topic(), "/TRACE" ), message );
 }
 
+#define SHT_DIV_ROUND(__A, __B) (((__A) + (__B)/2) / (__B))
+
+static constexpr unsigned shutterHalfway = 22;
+static constexpr unsigned c1 = 10000 * shutterHalfway / 5000;
+static constexpr unsigned c0 = 10000 - ( c1 * 100 );
+static constexpr unsigned c2 = ( c0 + 5 * c1 ) / 5;
+
+unsigned shutterPercentToRealPercent(unsigned percent) {
+    percent = 100 - percent;
+    return 100 - ( percent <= 5 ? c2 * percent : c1 * percent + c0 ) / 100;
+}
+
+unsigned realPercentToShutterPercent(unsigned percent) {
+    percent = ( 100 - percent ) * 100;
+    return 100 - ( c2 * 5 > percent ? SHT_DIV_ROUND( percent, c2 ) : SHT_DIV_ROUND( percent - c0, c1 ));
+}
+
+#undef DHT_DIV_ROUND
+
 static void triggerCommand()
 {
     log2( "triggering command ", currentDirection == 1 ? "DOWN" : "UP" );
@@ -79,8 +97,8 @@ static void triggerCommand()
 
 static void publishPosition()
 {
-    String position( currentPosition, 0 );
-    log( "publishing position ", position );
+    String position( realPercentToShutterPercent( static_cast< unsigned >( currentPosition )));
+    log2( "publishing position ", position );
     IoT.publish( str( "stat/", IoT.topic(), "/SHUTTER1" ), position );
 }
 
@@ -104,7 +122,7 @@ static void handleTopic( String const& message )
         char* ptr;
         unsigned desired = strtoul( message.c_str(), &ptr, 10 );
         if ( *ptr == '\0' && desired >= 0 && desired <= 100 ) {
-            desiredPosition = desired;
+            desiredPosition = shutterPercentToRealPercent( desired );
         } else {
             log2( "unknown command ", message );
             return;

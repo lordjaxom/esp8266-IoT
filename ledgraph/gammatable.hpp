@@ -34,6 +34,11 @@ struct BasicGammaTable
     {
         return { Base::get( color.r() ), Base::get( color.g() ), Base::get( color.b() ) };
     }
+    
+    static constexpr std::uint8_t apply( std::uint8_t input )
+	{
+    	return Base::get( input );
+	}
 };
 
 using GammaTable4 = BasicGammaTable< std::ratio< 4, 10 > >;

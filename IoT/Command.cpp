@@ -37,10 +37,8 @@ String Command::topic() const
 void Command::trigger( String const& message )
 {
     StaticJsonDocument< 128 > json;
-    if ( deserializeJson( json, message )) {
-        return;
-    }
-    if ( json["source"] == IoT.clientId() ) {
+    if ( !deserializeJson( json, message ) &&
+            json["source"] == IoT.clientId()) {
         return;
     }
 

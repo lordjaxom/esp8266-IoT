@@ -13,31 +13,25 @@ IoTClass IoT( "Sleep/Light/Ceiling", "akvsoft", "sacomoco02047781", "192.168.178
 PushButton button( debounce( gpioInput( 12 )));
 Device output1( "POWER1", gpioOutput( 5 ));
 Device output2( "POWER2", gpioOutput( 4 ));
-Command hold( "HOLD" );
-
-SceneManager sceneManager( "Sleep" );
 
 void setup()
 {
-    sceneManager.addSceneDevice( output1, { Scene::SCENE1 } );
-    sceneManager.addSceneDevice( output2, { Scene::SCENE3 } );
-    
-    button.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
-    button.longClickedEvent += [] { hold.trigger(); };
-    
-//    button.longClickedEvent += [] { IoT.publish( "cmnd/Sleep/Light/Ceiling/POWER", "HOLD" ); };
-//    button.clickedEvent += []( unsigned clicked ) {
-//        switch (clicked) {
-//            case 1:
-//                output1.toggle();
-//                break;
-//            case 2:
-//                IoT.publish( "cmnd/Sleep/Light/Ceiling/POWER", "DOUBLE" );
-//                break;
-//            default:
-//                break;
-//        }
-//    };
+    button.longClickedEvent += [] { IoT.publish( "stat/" + IoT.topic() + "/BUTTON1", "HOLD" ); };
+    button.clickedEvent += []( unsigned clicked ) {
+        switch ( clicked ) {
+            case 1:
+                output1.toggle();
+                break;
+            case 2:
+                IoT.publish( "stat/" + IoT.topic() + "/BUTTON1", "2" );
+                break;
+            case 3:
+                output2.toggle();
+                break;
+            default:
+                break;
+        }
+    };
 
     IoT.begin();
 }

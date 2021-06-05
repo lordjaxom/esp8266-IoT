@@ -5,7 +5,6 @@
 #include "IoT/Logger.hpp"
 #include "IoT/PushButton.hpp"
 #include "IoT/Remote.hpp"
-#include "IoT/SceneManager.hpp"
 
 IoTClass IoT( "Colin/Light/Living", "akvsoft", "sacomoco02047781", "192.168.178.28", 1883 );
 
@@ -13,22 +12,33 @@ PushButton button1( debounce( gpioInput( 12 )));
 Device output1( "POWER", gpioOutput( 5 ));
 
 PushButton button2( debounce( gpioInput( 14 )));
-Remote output2( "Colin/Zockbereich" );
+Remote output2( "Colin/Light/Gaming" );
 
 PushButton button3( debounce( gpioInput( 13 )));
-Remote output3( "FlurLicht", "POWER1" );
-
-SceneManager sceneManager( "Colin" );
+Remote output3( "Apartment/Light/Hallways", "POWER1" );
 
 void setup()
 {
-    button1.clickedEvent += []( unsigned clicked ) { sceneManager.sceneButtonClicked( clicked ); };
-    button2.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output2, clicked ); };
-    button3.clickedEvent += []( unsigned clicked ) { sceneManager.deviceButtonClicked( output3, clicked ); };
+    button1.clickedEvent += []( unsigned clicked ) {
+        if ( clicked == 1 ) {
+            output1.toggle();
+        }
+    };
 
-    sceneManager.addSceneDevice( output1 );
-    sceneManager.addLocalDevice( output2 );
-    sceneManager.addLocalDevice( output3 );
+    button2.clickedEvent += []( unsigned clicked ) {
+        if ( clicked == 1 ) {
+            output2.toggle();
+        }
+    };
+
+    button3.clickedEvent += []( unsigned clicked ) {
+        if ( clicked == 1 ) {
+            output3.toggle();
+        }
+        else if ( clicked == 2 ) {
+            IoT.publish( "stat/" + IoT.topic() + "/BUTTON3", "2" );
+        }
+    };
 
     IoT.begin();
 }

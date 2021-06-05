@@ -18,17 +18,27 @@ public:
      * @param trueValue
      * @param action
      */
-    Device( String name, String state, char const* falseValue = "OFF", char const* trueValue = "ON",
+    Device( String name, String state, char const* falseValue, char const* trueValue,
             std::function< void( bool value ) > action = nullptr ) noexcept;
+
+    /**
+     * Initialized a switchable device with name from IoT.
+     *
+     * @param state
+     * @param falseValue
+     * @param trueValue
+     * @param action
+     */
+    Device( String state, char const* falseValue, char const* trueValue, std::function< void ( bool value ) > action = nullptr ) noexcept;
 
     /**
      * Initializes a switchable device with falseValue "OFF" and trueValue "ON".
      *
      * @param name
-     * @param stateName
+     * @param state
      * @param action
      */
-    Device( String name, char const* stateName, std::function< void( bool value ) > action = nullptr ) noexcept;
+    Device( String name, String state, std::function< void( bool value ) > action = nullptr ) noexcept;
 
     /**
      * Initializes a switchable device with name from IoT, falseValue "OFF" and trueValue "ON".

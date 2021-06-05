@@ -20,8 +20,13 @@ Device::Device( String name, String state, char const* falseValue, char const* t
     }
 }
 
-Device::Device( String name, char const* stateName, std::function< void( bool value ) > action ) noexcept
-        : Device( move( name ), stateName, "OFF", "ON", move( action ))
+Device::Device( String state, char const* falseValue, char const* trueValue, function< void ( bool value ) > action ) noexcept
+        : Device( IoT.topic(), move( state ), falseValue, trueValue, move( action ))
+{
+}
+
+Device::Device( String name, String state, std::function< void( bool value ) > action ) noexcept
+        : Device( move( name ), move( state ), "OFF", "ON", move( action ))
 {
 }
 
